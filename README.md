@@ -21,3 +21,7 @@ Then install al the libraries used with:
 In order to execute all the files you must run:
 
 `python main.py`
+
+## Report
+
+In the report directory you will find the report of the whole work.
