@@ -17,7 +17,8 @@
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{blindtext}
-\usepackage{multicol}
+
+\usepackage{multicol}
 
 \begin{document}
 
@@ -44,9 +45,19 @@ Federico Luzzi 816753, Christian Uccheddu 800428
 
 \begin{multicols}{2}
 	\section{uiassahn}
-	\blindtext[4]
+	\blindtext[3]
+	\begin{figure}[H]
+		\centering
+		\includegraphics[height=0.6 \linewidth]{pics/IterHold.png}
+		\caption{Il grafico mostra la variazione tra le accuracy di train (sinistra) e test (destra) per ogni modello}
+		\label{fig:trainHold}
+	\end{figure}
+	aisnsadniasd \cite{a:tesi}
 \end{multicols}
 
-
+\newpage
+\begin{thebibliography}{1}
+	\bibitem{b:tesi}\href{https://it.wikipedia.org/wiki/Demenza}{\emph{Demenza - \url{https://it.wikipedia.org/wiki/Demenza}}}	
+\end{thebibliography}
 
 \end{document}
