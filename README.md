@@ -18,4 +18,6 @@ Then install al the libraries used with:
 
 ## Execution
 
-In order to execute all the files 
+In order to execute all the files you must run:
+
+`python main.py`
