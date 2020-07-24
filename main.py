@@ -1,10 +1,11 @@
+from preprocessing.preprocessing import preprocessing_data
 import time
 
+
 def main():
-    pass
+    preprocessing_data()
 
 if __name__ == "__main__":
     start_time = time.time()
     main()
-    print("BUILD SUCCESS")
-    print("Execution time \n--- %s seconds ---" % (time.time() - start_time))
+    print("Execution time \n--- %s s ---" % (time.time() - start_time))
