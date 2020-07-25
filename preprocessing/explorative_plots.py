@@ -9,12 +9,13 @@ def histogram_plot(x,y):
     '''
     Istogramma per disegnare le distribuzioni delle variabili
     @params:
-        x:   - Required   : Serie di cui disegnare la distribuzione
+        x:   - Required   : Prima serie di cui disegnare la distribuzione
+        y:   - Required   : Seconda serie di cui disegnare la distribuzione
     '''
 
     fig = plt.figure()
-    plt.hist(x, bins = 1000,  color = "skyblue")
-    plt.hist(y, bins = 1000,  color = "red")
+    plt.hist(x, bins = 1000,  color = "skyblue", label = "Training set")
+    plt.hist(y, bins = 1000,  color = "red", label= "Test set")
     plt.xlim(min(x), max(x))
     plt.xlabel("Bins di f{}".format(x.name))
     plt.ylabel("Count")
