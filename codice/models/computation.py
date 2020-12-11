@@ -119,16 +119,16 @@ def computation():
     yc_pred_test = model.predict(X_test_scaled)
     y_pred_test = np.argmax(yc_pred_test, axis = 1)
 
-    np.savetxt(args.output + "/christian_uccheddu_800428_score2.txt", y_pred_test)
+    #np.savetxt(args.output + "/christian_uccheddu_800428_score2.txt", y_pred_test)
 
     ################# SAVE THE WEIGHTS ###################À
-    if not args.evaluate:    
-        print(">>>>>>>>> SAVING WEIGHTS >>>>>>>>")
-        f = open(args.output + "/weights.txt", "w")
-        f.write('Layers name: {}\n'.format(model.weights[-2].name))
-        f.write('Layers kernel shape: {}\n'.format(model.weights[-2].shape))
-        f.write('Kernel: {}\n'.format(model.weights[-2][0], end = '\n\n'))
-        f.write('Layers name: {}\n'.format(model.weights[-1].name))
-        f.write('Layers kernel shape: {}\n'.format(model.weights[-1].shape))
-        f.write('Kernel: {}\n'.format(model.weights[-1]))
-        f.close()
+    #if not args.evaluate:    
+    #    print(">>>>>>>>> SAVING WEIGHTS >>>>>>>>")
+    #    f = open(args.output + "/weights.txt", "w")
+    #    f.write('Layers name: {}\n'.format(model.weights[-2].name))
+    #    f.write('Layers kernel shape: {}\n'.format(model.weights[-2].shape))
+    #    f.write('Kernel: {}\n'.format(model.weights[-2][0], end = '\n\n'))
+    #    f.write('Layers name: {}\n'.format(model.weights[-1].name))
+    #    f.write('Layers kernel shape: {}\n'.format(model.weights[-1].shape))
+    #    f.write('Kernel: {}\n'.format(model.weights[-1]))
+    #    f.close()
