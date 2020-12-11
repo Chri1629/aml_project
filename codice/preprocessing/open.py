@@ -3,7 +3,6 @@
 '''
 
 import pandas as pd
-from .explorative_plots import histogram_plot
 
 def open_data():
     '''

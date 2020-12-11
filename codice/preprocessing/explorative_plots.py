@@ -3,8 +3,16 @@ File che definisce i plot esplorativi
 '''
 
 import matplotlib.pyplot as plt
+import argparse
+import pandas as pd
 
-def histogram_plot(x,y):
+parser = argparse.ArgumentParser()
+parser.add_argument('-o', '--output', type=str, required=False, default="risultati_modelli")
+
+args = parser.parse_args()
+pd.options.mode.chained_assignment = None
+
+def target_distribution(df_train, df_validation):
 
     '''
     Istogramma per disegnare le distribuzioni delle variabili
@@ -12,15 +20,53 @@ def histogram_plot(x,y):
         x:   - Required   : Prima serie di cui disegnare la distribuzione
         y:   - Required   : Seconda serie di cui disegnare la distribuzione
     '''
-
-    fig = plt.figure()
-    plt.hist(x, bins = 1000,  color = "skyblue", label = "Training set")
-    plt.hist(y, bins = 1000,  color = "red", label= "Test set")
-    plt.xlim(min(x), max(x))
-    plt.xlabel("Bins di f{}".format(x.name))
-    plt.ylabel("Count")
-    plt.grid()
-    plt.title('Distribuzione di f{}'.format(x.name))
-    plt.legend()
+    
+    fig = plt.figure(figsize = (8,4))
+    plt.subplot(1,2,1)
+    plt.hist(df_train, bins = 100)
+    plt.title("Distribution of training set target")
+    plt.subplot(1,2,2)
+    plt.hist(df_validation, bins = 100)
+    plt.title("Distribution of validation set target")
     plt.show()
-    fig.savefig("preprocessing/pics/Histogram_f{}.png".format(x.name), format = "png", dpi = 200)
+    #fig.savefig(args.output + "/pics/target_distribution_{}.png".format(colonna), dpi =100, bbox_inches='tight')
+    plt.close(fig)
+
+def acc_loss(history):
+    fig = plt.figure(figsize=(15,20))
+    plt.subplot(1,2,1)
+    plt.plot(history.history['loss'], label = "Train loss", color = "red")
+    plt.plot(history.history['val_loss'], label="Validation loss", color = "skyblue")
+    plt.legend(loc='upper right', fontsize = 12)
+    plt.xticks(fontsize = 12)
+    plt.yticks(fontsize = 12)
+    plt.xlabel('Epochs', size = 15)
+    plt.ylabel('Loss', size = 15) 
+    
+    plt.subplot(1,2,2)
+    plt.plot(history.history['accuracy'], label = "Train Accuracy", color = "red")
+    plt.plot(history.history['val_accuracy'], label="Validation Accuracy", color = "skyblue")
+    plt.legend(loc='upper right', fontsize = 12)
+    plt.xticks(fontsize = 12)
+    plt.yticks(fontsize = 12)
+    plt.xlabel('Epochs', size = 15)
+    plt.ylabel('Accuracy', size = 15)
+    plt.show()
+    fig.savefig(args.output + "/pics/acc_loss.png", dpi =100, bbox_inches='tight')
+    plt.close(fig) 
+
+def histo_plot(df1, df2, df3):
+    for i, colonna in enumerate(df1.columns[1:]):
+        fig = plt.figure(i,figsize = (8,4))
+        plt.subplot(1,3,1)
+        plt.hist(df1[colonna], bins = 100)
+        plt.title("Distribution of {} on training set".format(colonna))
+        plt.subplot(1,3,2)
+        plt.hist(df2[colonna], bins = 100)
+        plt.title("Distribution of {} on validation set".format(colonna))
+        plt.subplot(1,3,3)
+        plt.hist(df3[colonna], bins = 100)
+        plt.title("Distribution of {} on test set".format(colonna))
+        plt.show()
+        #fig.savefig(args.output + "/pics/distribution_{}.png".format(colonna), dpi =100, bbox_inches='tight')
+        plt.close(fig)
