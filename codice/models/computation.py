@@ -1,6 +1,8 @@
 import argparse
 import pandas as pd
 from preprocessing.preprocessing import preprocessing_data
+from preprocessing.explorative_plots import loss_plotter
+from preprocessing.explorative_plots import scatter_plotter
 from keras import *
 import tensorflow as tf
 import pandas as pd
@@ -43,7 +45,7 @@ from keras import metrics
 from .all_models import getModel
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-e', '--epoch', type=int, required=False, default=10, help ="Give the number of epochs, default = 10")
+parser.add_argument('-e', '--epoch', type=int, required=False, default=5, help ="Give the number of epochs, default = 10")
 parser.add_argument('-ie', '--initial_epoch', type=int, required=False, default=0, help ="Give the initial epoch, default = 0")
 parser.add_argument('-bs', '--batch-size', type=int, required=False, default=128, help ="Give the batch size, default = 128")
 parser.add_argument('-lr', '--learning-rate', type=float, required=False, default=5e-3, help ="Give the learning rate, default = 1e-3") 
@@ -61,10 +63,10 @@ args = parser.parse_args()
 pd.options.mode.chained_assignment = None
 
 def computation():
-    X_train_scaled, yc_train = preprocessing_data()
+    x_train_scaled, x_validation_scaled, x_test_scaled, y_train_scaled, y_validation, y_validation_scaled = preprocessing_data()
 
     if args.model == None:
-        model = getModel(args.model_schema, X_train_scaled.shape[1])
+        model = getModel(args.model_schema, x_train_scaled.shape[1])
     else:
         print(">>> Loading model ({0})...".format(args.model))
         model = load_model(args.model)
@@ -96,30 +98,30 @@ def computation():
 
         print(">>> Training...")
 
-        W_val = 0.5 * np.random.randn(X_train_scaled.shape[1]) + 1
+        # Cambiare inizializzazione dei pesi
+        W_val = 0.5 * np.random.randn(x_train_scaled.shape[1]) + 1
 
-        history = model.fit(X_train_scaled, yc_train,
-                            validation_data = (X_validation_scaled, yc_validation),
+        history = model.fit(x_train_scaled, y_train_scaled,
+                            validation_data = (x_validation_scaled, y_validation_scaled),
                             epochs=args.epoch, initial_epoch=args.initial_epoch,
                             batch_size=args.batch_size, shuffle=True,
                             callbacks=[auto_save, early_stop, lr_sched, csv_logger])
         
 
     ################## COMPUTE THE CONFUSION MATRIX AND THE LOSS ON THE VALIDATION #######
-    acc_loss(history)
+    loss_plotter(history)
 
-    yc_pred_val = model.predict(X_validation_scaled)
-    y_pred_val = np.argmax(yc_pred_val, axis = 1)
-
-    print(classification_report(y_validation, y_pred_val))
-    confusion_mat(y_validation, y_pred_val)
-
+    scaler_y = joblib.load("scaler_y.pkl")
+    # Importo lo scaler per usare al contrario le predizioni
+    y_validation_scaled_pred = model.predict(x_validation_scaled)
+    y_validation_pred =  scaler_y.inverse_transform(y_validation_scaled_pred)
+    scatter_plotter(y_validation, y_validation_pred)
+    
 
     ################# COMPUTE THE PREDICTION ON THE TEST #############
-    yc_pred_test = model.predict(X_test_scaled)
-    y_pred_test = np.argmax(yc_pred_test, axis = 1)
+    y_test_scaled_pred = model.predict(x_test_scaled)
+    y_test_pred =  scaler_y.inverse_transform(y_test_scaled_pred)
 
-    #np.savetxt(args.output + "/christian_uccheddu_800428_score2.txt", y_pred_test)
 
     ################# SAVE THE WEIGHTS ###################À
     #if not args.evaluate:    

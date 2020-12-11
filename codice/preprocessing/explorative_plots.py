@@ -42,35 +42,51 @@ def target_distribution(df_train, df_validation):
     fig.savefig("explorative_pics/target_distribution.png", dpi =100, bbox_inches='tight')
     plt.close(fig)
 
-def acc_loss(history):
-
+ 
+def loss_plotter(history):
     '''
     Istogramma per disegnare le distribuzioni delle variabili
     @params:
         history:    - Required   : History del fit del modello di cui disegnare accuracy e loss
     '''
-
-    fig = plt.figure(figsize=(15,20))
-    plt.subplot(1,2,1)
-    plt.plot(history.history['loss'], label = "Train loss", color = "red")
-    plt.plot(history.history['val_loss'], label="Validation loss", color = "skyblue")
+    fig = plt.figure(figsize=(10,5))
+    plt.plot(history.history['loss'], label = "Train loss")
+    plt.plot(history.history['val_loss'], label="Validation loss")
     plt.legend(loc='upper right', fontsize = 12)
     plt.xticks(fontsize = 12)
     plt.yticks(fontsize = 12)
-    plt.xlabel('Epochs', size = 15)
-    plt.ylabel('Loss', size = 15) 
-    
-    plt.subplot(1,2,2)
-    plt.plot(history.history['accuracy'], label = "Train Accuracy", color = "red")
-    plt.plot(history.history['val_accuracy'], label="Validation Accuracy", color = "skyblue")
-    plt.legend(loc='upper right', fontsize = 12)
-    plt.xticks(fontsize = 12)
-    plt.yticks(fontsize = 12)
-    plt.xlabel('Epochs', size = 15)
-    plt.ylabel('Accuracy', size = 15)
+    plt.xlabel('Epochs', size = 20)
+    plt.ylabel('Value', size = 20)
+    plt.title("Loss function", size =25)
+    plt.grid()
     plt.show()
-    fig.savefig(args.output + "/pics/acc_loss.png", dpi =100, bbox_inches='tight')
-    plt.close(fig) 
+    fig.savefig(args.output + '/pics/loss_plot.png', bbox_inches='tight')
+    plt.close(fig)
+
+def scatter_plotter(y, pred):
+    '''
+    Istogramma per disegnare le distribuzioni delle variabili
+    @params:
+        y:    - Required   : History del fit del modello di cui disegnare accuracy e loss
+        pred:    - Required   : History del fit del modello di cui disegnare accuracy e loss
+    '''
+    fig = plt.figure(figsize=(15,8))
+    plt.plot(y,pred, 'o', label = "Predicted")
+    top = max(pred)
+    plt.plot([0,top],[0,top], "r--", color = "deepskyblue", label = "Perfect prediction")
+    plt.xticks( fontsize = 12)
+    plt.yticks( fontsize = 12)
+    plt.xlabel('True price', size = 20) 
+    plt.ylabel('Predicted price', size = 20) 
+    plt.title("Scatter plot of the prediction")
+    plt.legend(loc="best", prop={'size': 15})
+    plt.xlim(left = 0)
+    plt.ylim(bottom=0)
+    plt.ioff()
+    plt.grid()
+    plt.show()
+    fig.savefig(args.output+ '/pics/scatter_plot.png', bbox_inches='tight')
+    plt.close(fig)
 
 def histo_plot(df1, df2, df3):
     '''

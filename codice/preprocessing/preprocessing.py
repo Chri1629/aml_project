@@ -10,6 +10,7 @@ import numpy as np
 from scipy import stats
 import pandas as pd
 import haversine as hs
+import joblib
 import os
 
 def check_missing(df):
@@ -64,18 +65,53 @@ def distance_from(loc1,loc2):
     dist=hs.haversine(loc1,loc2)
     return round(dist,2)
 
-def compute_distance(df):
-    # Crea la coppia di coordinate
-    df['coor_pickup'] = list(zip(df['pickup_latitude'], df['pickup_longitude']))
-    df['coor_dropoff'] = list(zip(df['dropoff_latitude'], df['dropoff_longitude']))
 
-    # Calcola la distanza
-    df['dis'] = df.apply(lambda row: distance_from(row['coor_dropoff'], row['coor_pickup']), axis = 1)
-    
-    # Camcella le colonne inutili
-    df = df.drop(['coor_pickup', 'coor_dropoff'], axis = 1)
-    
-    return df
+def scale_data(df):
+    col_names = ['dis', 'x_pickup', 'y_pickup', 'z_pickup', 'x_dropoff', 'y_dropoff', 'z_dropoff']
+    features = df[col_names]
+    ct = ColumnTransformer([
+            ('somename', StandardScaler(), ['dis', 'x_pickup', 'y_pickup', 'z_pickup', 'x_dropoff', 'y_dropoff', 'z_dropoff'])], 
+            remainder='passthrough')
+
+    feature_scaled = ct.fit_transform(features)
+
+    # Vanno concatenate nel modo giusto, cosa che non fa al momento
+    df_scaled = feature_scaled.copy()
+    return df_scaled
+
+
+def compute_distance(df_train, df_validation, df_test):
+    # Crea la coppia di coordinate
+    if not os.path.exists('../data/x_train_no_out_dist.csv'):
+        df_train['coor_pickup'] = list(zip(df_train['pickup_latitude'], df_train['pickup_longitude']))
+        df_train['coor_dropoff'] = list(zip(df_train['dropoff_latitude'], df_train['dropoff_longitude']))
+
+        df_validation['coor_pickup'] = list(zip(df_validation['pickup_latitude'], df_validation['pickup_longitude']))
+        df_validation['coor_dropoff'] = list(zip(df_validation['dropoff_latitude'], df_validation['dropoff_longitude']))
+
+        df_test['coor_pickup'] = list(zip(df_test['pickup_latitude'], df_test['pickup_longitude']))
+        df_test['coor_dropoff'] = list(zip(df_test['dropoff_latitude'], df_test['dropoff_longitude']))
+
+        # Calcola la distanza
+        df_train['dis'] = df_train.apply(lambda row: distance_from(row['coor_dropoff'], row['coor_pickup']), axis = 1)
+        df_validation['dis'] = df_validation.apply(lambda row: distance_from(row['coor_dropoff'], row['coor_pickup']), axis = 1)
+        df_test['dis'] = df_test.apply(lambda row: distance_from(row['coor_dropoff'], row['coor_pickup']), axis = 1)
+
+        df_train = df_train.drop(['coor_pickup', 'coor_dropoff'], axis = 1)
+        df_validation = df_validation.drop(['coor_pickup', 'coor_dropoff'], axis = 1)
+        df_test = df_test.drop(['coor_pickup', 'coor_dropoff'], axis = 1)
+        # Salvo il df
+        df_train.to_csv('../data/x_train_no_out_dist.csv')
+        df_validation.to_csv('../data/x_validation_no_out_dist.csv')
+        df_test.to_csv('../data/x_test_no_out_dist.csv')
+        
+    # Se i dati sono già presenti li carico
+    df_train = pd.read_csv('../data/x_train_no_out_dist.csv', sep = ",", index_col=0) 
+    df_validation = pd.read_csv('../data/x_validation_no_out_dist.csv', sep = ",", index_col=0) 
+    df_test = pd.read_csv('../data/x_test_no_out_dist.csv', sep = ",", index_col=0) 
+
+    return df_train, df_validation, df_test
+
 
 def preprocessing_data():
     train, test = open_data()
@@ -108,43 +144,36 @@ def preprocessing_data():
     target_distribution(y_train['trip_duration'], y_validation['trip_duration'])
 
     print("************* COMPUTE DISTANCE BETWEEN POINTS ************ \n")  
-    x_train = compute_distance(x_train)
-    x_validation = compute_distance(x_validation)
-    x_test = compute_distance(x_test)
+    x_train, x_validation, x_test = compute_distance(x_train, x_validation, x_test)
 
     print("************* FIX LATITUDE AND LONGITUDE ************ \n")   
     x_train = fix_lat_long(x_train)
     x_validation = fix_lat_long(x_validation)
     x_test = fix_lat_long(x_test)
 
+    print("************* CREATE DUMMIES ************ \n")
+    x_train = pd.get_dummies(x_train, columns = ['passenger_count','store_and_fwd_flag'])
+    x_validation = pd.get_dummies(x_validation, columns = ['passenger_count','store_and_fwd_flag'])
+    x_test = pd.get_dummies(x_test, columns = ['passenger_count','store_and_fwd_flag'])
+    print(x_test)
+
     print("************* SCALE THE DATA ************ \n")
-    # Scaliamo i dati ricordandoci di non scalare le date
+    x_train_scaled = scale_data(x_train)
+    x_validation_scaled = scale_data(x_validation)
+    x_test_scaled = scale_data(x_test)
 
-    col_names = ['number_of_reviews', 'calculated_host_listings_count', 'Private_room', 'minimum_nights',
-             'Entire_home/apt','reviews_per_month','x','y','z','availability_365']
-
-    features_train = X_train[col_names]
-    features_validation = X_validation[col_names]
-    features_test = X_test[col_names]
-
-    ct = ColumnTransformer([
-            ('somename', StandardScaler(), ['number_of_reviews', 'calculated_host_listings_count',
-                                            'reviews_per_month','x','y','z','availability_365'])], 
-        remainder='passthrough')
-
-    X_train_scaled = ct.fit_transform(features_train)
-    X_validation_scaled = ct.fit_transform(features_validation)
-    X_test_scaled = ct.fit_transform(features_test)
+    # Ora scala la variabile di target
     sc_y = StandardScaler()
+    y_train_scaled = sc_y.fit_transform(y_train)
+    y_validation_scaled = sc_y.fit_transform(y_validation)
 
-    y_train_scaled = sc_y.fit_transform(y_train.reshape(-1, 1))
-    y_validation_scaled = sc_y.fit_transform(y_validation.reshape(-1, 1))
-
+    # Salva lo scaler di y per poter tornare indietro
     joblib.dump(sc_y,  "scaler_y.pkl")
 
     y_train_scaled = y_train_scaled.reshape(-1,1)
     y_validation_scaled = y_validation_scaled.reshape(-1,1)
-    print("************* TRANSFoRM AND SAVE INTO NUMPY ARRAY ************ \n")
+
+    print("************* TRANSFORM AND SAVE INTO NUMPY ARRAY ************ \n")
     # Salviamo i dati in numpy array in modo da poterli riusare
     #np.save('../data/x_train_no_out.npy', x_train)
     #np.save('../data/y_train_no_out.npy', y_train)
@@ -152,4 +181,4 @@ def preprocessing_data():
     #np.save('../data/y_validation_no_out.npy', y_validation)
     #np.save('../data/x_test.npy', x_test)
 
-    return x_train, y_train, x_validation, y_validation, x_test
+    return x_train_scaled, x_validation_scaled, x_test_scaled, y_train_scaled, y_validation, y_validation_scaled

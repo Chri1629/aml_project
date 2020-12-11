@@ -38,8 +38,7 @@ def mkdir_p(mypath):
 def main():
     mkdir_p(args.output)
     mkdir_p(args.output + "/pics")
-    preprocessing_data()
-    #computation()
+    computation()
 
 if __name__ == "__main__":
     start_time = time.time()

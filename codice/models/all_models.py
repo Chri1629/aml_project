@@ -16,18 +16,18 @@ def getModel(id, input_dim):
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>        RETI USATE    <<<<<<<<<<<<<<<<<<<<<<<<<            
 
     if id=="best_model":
-        model.add(Dense(units=512, input_dim=input_dim, activation="relu"))
+        model.add(Dense(units=32, input_dim=input_dim, activation="relu"))
         model.add(Dropout(0.2))
-        model.add(Dense(units=256,activation="relu"))
+        model.add(Dense(units=16,activation="relu"))
         model.add(Dropout(0.2))
-        model.add(Dense(units=128,activation="relu"))
+        model.add(Dense(units=8,activation="relu"))
         model.add(Dropout(0.2))
 
-        model.add(Dense(2, activation = "sigmoid"))
+        model.add(Dense(1))
 
-        model.compile(loss=losses.binary_crossentropy,
+        model.compile(loss=losses.mean_squared_error,
                     optimizer='adam',
-                    metrics = ['accuracy'])
+                    metrics = ['mse'])
     
         print(model.summary())
 
