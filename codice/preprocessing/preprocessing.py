@@ -27,18 +27,33 @@ def delete_outliers(df_train):
 
         # Aggiungo nuovamente le altre colonne
         train_no_out = pd.merge(target_no_out, df_train_input, how = "inner", left_index=True, right_index=True)
-        x_train_no_out = train_no_out.iloc[:,0:(len(train_no_out.columns)-1)]
-        y_train_no_out = train_no_out.iloc[:,-1]
+
+        #x_train_no_out = train_no_out.iloc[:,0:(len(train_no_out.columns)-1)]
+        x_train_no_out = train_no_out.drop("trip_duration", axis = 1)
+        y_train_no_out = train_no_out["trip_duration"]
 
         # Salva in numpy array
         x_train_no_out.to_csv('../data/x_train_no_out.csv')
         y_train_no_out.to_csv('../data/y_train_no_out.csv')
         
     # Se i dati sono già presenti li carico
-    x_train_no_out = pd.read_csv('../data/x_train_no_out.csv', sep = ",")
-    y_train_no_out = pd.read_csv('../data/y_train_no_out.csv', sep = ",")
+    x_train_no_out = pd.read_csv('../data/x_train_no_out.csv', sep = ",", index_col=0)
+    y_train_no_out = pd.read_csv('../data/y_train_no_out.csv', sep = ",", index_col=0)
     return x_train_no_out, y_train_no_out
 
+def fix_lat_long(df_train, df_validation, df_test):
+
+    df_train['x_pickup'] = np.cos(df_train['pickup_latitude']) * np.cos(df_train['pickup_longitude'])
+    df_train['y_pickup'] = np.cos(df_train['pickup_latitude']) * np.sin(df_train['pickup_longitude'])
+    df_train['z_pickup'] = np.sin(df_train['pickup_latitude'])
+
+    df_train['x_dropoff'] = np.cos(df_train['dropoff_latitude']) * np.cos(df_train['dropoff_longitude'])
+    df_train['y_dropoff'] = np.cos(df_train['dropoff_latitude']) * np.sin(df_train['dropoff_longitude'])
+    df_train['z_dropoff'] = np.sin(df_train['dropoff_latitude'])
+
+
+    X_train.drop(['latitude', 'longitude'], axis = 1, inplace = True)
+    X_test.drop(['latitude', 'longitude'], axis = 1, inplace = True)
 
 def preprocessing_data():
     train, test = open_data()
@@ -62,13 +77,11 @@ def preprocessing_data():
     print()
 
     print("************* SPLITTING DATA ************ \n")        
-    x_train = train.iloc[:,:-1]
-    y_train = train.iloc[:,-1]
     x_test = test.copy()
 
-    #x_train, x_validation, y_train, y_validation = train_test_split(x_train, y_train, test_size=0.3, random_state=4242)
     x_train, x_validation, y_train, y_validation = train_test_split(x_train_no_out, y_train_no_out, test_size=0.3, random_state=4242)
 
+    print()
     print("************* PRODUCING PLOTS ************ \n")
 
     # Levo le date per disegnare e levo anche la data di dropoff nel train perché non è presente nel test
@@ -77,11 +90,17 @@ def preprocessing_data():
     test_for_distribution = x_test.drop('pickup_datetime', axis =1)
     
     histo_plot(train_for_distribution, validation_for_distribution, test_for_distribution)
-    #target_distribution(y_train, y_validation)
+    target_distribution(y_train['trip_duration'], y_validation['trip_duration'])
+
+
+    print("************* FIX LATITUDE AND LONGITUDE ************ \n")
+    
 
     print("************* SCALE THE DATA ************ \n")
     # Scaliamo i dati ricordandoci di non scalare le date
 
+    print()
+    print("************* TRANSOFRM AND SAVE INTO NUMPY ARRAY ************ \n")
     # Salviamo i dati in numpy array in modo da poterli riusare
     #np.save('../data/x_train_no_out.npy', x_train)
     #np.save('../data/y_train_no_out.npy', y_train)

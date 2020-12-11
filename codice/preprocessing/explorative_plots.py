@@ -22,14 +22,15 @@ def target_distribution(df_train, df_validation):
     '''
     
     fig = plt.figure(figsize = (8,4))
+    plt.suptitle("Distribution of target variable")
     plt.subplot(1,2,1)
     plt.hist(df_train, bins = 100)
-    plt.title("Distribution of training set target")
+    plt.title("training")
     plt.subplot(1,2,2)
     plt.hist(df_validation, bins = 100)
-    plt.title("Distribution of validation set target")
-    plt.show()
-    #fig.savefig(args.output + "/pics/target_distribution_{}.png".format(colonna), dpi =100, bbox_inches='tight')
+    plt.title("validation")
+    #plt.show()
+    fig.savefig("explorative_pics/target_distribution.png", dpi =100, bbox_inches='tight')
     plt.close(fig)
 
 def acc_loss(history):
@@ -58,15 +59,16 @@ def acc_loss(history):
 def histo_plot(df1, df2, df3):
     for i, colonna in enumerate(df1.columns[1:]):
         fig = plt.figure(i,figsize = (8,4))
+        plt.suptitle("Distribution of {}".format(colonna))
         plt.subplot(1,3,1)
         plt.hist(df1[colonna], bins = 100)
-        plt.title("Distribution of {} on training set".format(colonna))
+        plt.title("Training")
         plt.subplot(1,3,2)
         plt.hist(df2[colonna], bins = 100)
-        plt.title("Distribution of {} on validation set".format(colonna))
+        plt.title("Validation")
         plt.subplot(1,3,3)
         plt.hist(df3[colonna], bins = 100)
-        plt.title("Distribution of {} on test set".format(colonna))
-        plt.show()
-        #fig.savefig(args.output + "/pics/distribution_{}.png".format(colonna), dpi =100, bbox_inches='tight')
+        plt.title("Test")
+        #plt.show()
+        fig.savefig("explorative_pics/distribution_{}.png".format(colonna), dpi =100, bbox_inches='tight')
         plt.close(fig)
