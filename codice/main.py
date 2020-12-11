@@ -5,7 +5,6 @@ import argparse
 import pandas as pd
 
 parser = argparse.ArgumentParser()
-
 parser.add_argument('-e', '--epoch', type=int, required=False, default=10, help ="Give the number of epochs, default = 10")
 parser.add_argument('-ie', '--initial_epoch', type=int, required=False, default=0, help ="Give the initial epoch, default = 0")
 parser.add_argument('-bs', '--batch-size', type=int, required=False, default=128, help ="Give the batch size, default = 128")
@@ -39,7 +38,7 @@ def main():
     mkdir_p(args.output)
     mkdir_p(args.output + "/pics")
     computation()
-
+    
 if __name__ == "__main__":
     start_time = time.time()
     main()

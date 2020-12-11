@@ -64,7 +64,6 @@ pd.options.mode.chained_assignment = None
 
 def computation():
     x_train_scaled, x_validation_scaled, x_test_scaled, y_train_scaled, y_validation, y_validation_scaled = preprocessing_data()
-
     if args.model == None:
         model = getModel(args.model_schema, x_train_scaled.shape[1])
     else:
@@ -124,13 +123,13 @@ def computation():
 
 
     ################# SAVE THE WEIGHTS ###################À
-    #if not args.evaluate:    
-    #    print(">>>>>>>>> SAVING WEIGHTS >>>>>>>>")
-    #    f = open(args.output + "/weights.txt", "w")
-    #    f.write('Layers name: {}\n'.format(model.weights[-2].name))
-    #    f.write('Layers kernel shape: {}\n'.format(model.weights[-2].shape))
-    #    f.write('Kernel: {}\n'.format(model.weights[-2][0], end = '\n\n'))
-    #    f.write('Layers name: {}\n'.format(model.weights[-1].name))
-    #    f.write('Layers kernel shape: {}\n'.format(model.weights[-1].shape))
-    #    f.write('Kernel: {}\n'.format(model.weights[-1]))
-    #    f.close()
+    if not args.evaluate:    
+        print(">>>>>>>>> SAVING WEIGHTS >>>>>>>>")
+        f = open(args.output + "/weights.txt", "w")
+        f.write('Layers name: {}\n'.format(model.weights[-2].name))
+        f.write('Layers kernel shape: {}\n'.format(model.weights[-2].shape))
+        f.write('Kernel: {}\n'.format(model.weights[-2][0], end = '\n\n'))
+        f.write('Layers name: {}\n'.format(model.weights[-1].name))
+        f.write('Layers kernel shape: {}\n'.format(model.weights[-1].shape))
+        f.write('Kernel: {}\n'.format(model.weights[-1]))
+        f.close()

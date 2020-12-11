@@ -73,11 +73,9 @@ def scale_data(df):
             ('somename', StandardScaler(), ['dis', 'x_pickup', 'y_pickup', 'z_pickup', 'x_dropoff', 'y_dropoff', 'z_dropoff'])], 
             remainder='passthrough')
 
-    feature_scaled = ct.fit_transform(features)
-
+    df[col_names] = ct.fit_transform(features)
     # Vanno concatenate nel modo giusto, cosa che non fa al momento
-    df_scaled = feature_scaled.copy()
-    return df_scaled
+    return df
 
 
 def compute_distance(df_train, df_validation, df_test):
@@ -155,13 +153,13 @@ def preprocessing_data():
     x_train = pd.get_dummies(x_train, columns = ['passenger_count','store_and_fwd_flag'])
     x_validation = pd.get_dummies(x_validation, columns = ['passenger_count','store_and_fwd_flag'])
     x_test = pd.get_dummies(x_test, columns = ['passenger_count','store_and_fwd_flag'])
-    print(x_test)
 
     print("************* SCALE THE DATA ************ \n")
     x_train_scaled = scale_data(x_train)
     x_validation_scaled = scale_data(x_validation)
     x_test_scaled = scale_data(x_test)
 
+    
     # Ora scala la variabile di target
     sc_y = StandardScaler()
     y_train_scaled = sc_y.fit_transform(y_train)
@@ -173,12 +171,24 @@ def preprocessing_data():
     y_train_scaled = y_train_scaled.reshape(-1,1)
     y_validation_scaled = y_validation_scaled.reshape(-1,1)
 
-    print("************* TRANSFORM AND SAVE INTO NUMPY ARRAY ************ \n")
-    # Salviamo i dati in numpy array in modo da poterli riusare
-    #np.save('../data/x_train_no_out.npy', x_train)
-    #np.save('../data/y_train_no_out.npy', y_train)
-    #np.save('../data/x_validation_no_out.npy', x_validation)
-    #np.save('../data/y_validation_no_out.npy', y_validation)
-    #np.save('../data/x_test.npy', x_test)
+    print("************* DROP UNUSEFUL COLUMNS ************ \n")
+
+    # Droppiamo momentaneamente le colonne che non so come trattare in modo da lavorarci. Poi le utilizzeremo meglio
+    # Sarebbe interessante secondo me tenere solo l'ora del timestemp perché penso che sia la più indicativa 
+
+    x_train_scaled = x_train_scaled.iloc[:,6:]
+    x_validation_scaled = x_validation_scaled.iloc[:,6:]
+    x_test_scaled = x_test_scaled.iloc[:,5:]
+
+    print("************* FIX THE CLASSES IN THE TEST SET ************ \n")
+    # Per trattare le cose in questo modo devo aggiungere le colonne fittizie a test per la classe 7 e 8 che non sono presenti in
+    # test
+    x_validation_scaled.insert(loc=14, column='passenger_count_7', value=0)
+    x_validation_scaled.insert(loc=15, column='passenger_count_8', value=0)
+    x_validation_scaled.insert(loc=16, column='passenger_count_9', value=0)
+
+
+    x_test_scaled.insert(loc=14, column='passenger_count_7', value=0)
+    x_test_scaled.insert(loc=15, column='passenger_count_8', value=0)
 
     return x_train_scaled, x_validation_scaled, x_test_scaled, y_train_scaled, y_validation, y_validation_scaled
