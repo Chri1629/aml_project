@@ -1,11 +1,12 @@
 from preprocessing.preprocessing import preprocessing_data
+
 from models.computation import computation
 import time
 import argparse
 import pandas as pd
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-e', '--epoch', type=int, required=False, default=10, help ="Give the number of epochs, default = 10")
+parser.add_argument('-e', '--epoch', type=int, required=False, default=5, help ="Give the number of epochs, default = 10")
 parser.add_argument('-ie', '--initial_epoch', type=int, required=False, default=0, help ="Give the initial epoch, default = 0")
 parser.add_argument('-bs', '--batch-size', type=int, required=False, default=128, help ="Give the batch size, default = 128")
 parser.add_argument('-lr', '--learning-rate', type=float, required=False, default=5e-3, help ="Give the learning rate, default = 1e-3") 
@@ -20,6 +21,7 @@ parser.add_argument('-ms', '--model-schema', type=str, required=False, default =
 parser.add_argument('-o', '--output', type=str, required=False, default="risultati_modelli")
 
 args = parser.parse_args()
+
 pd.options.mode.chained_assignment = None
 
 
@@ -37,7 +39,7 @@ def mkdir_p(mypath):
 def main():
     mkdir_p(args.output)
     mkdir_p(args.output + "/pics")
-    computation()
+    computation(args)
 
 if __name__ == "__main__":
     start_time = time.time()

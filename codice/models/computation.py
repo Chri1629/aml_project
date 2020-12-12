@@ -44,25 +44,9 @@ from keras.optimizers import Adam, SGD
 from keras import metrics
 from .all_models import getModel
 
-parser = argparse.ArgumentParser()
-parser.add_argument('-e', '--epoch', type=int, required=False, default=5, help ="Give the number of epochs, default = 10")
-parser.add_argument('-ie', '--initial_epoch', type=int, required=False, default=0, help ="Give the initial epoch, default = 0")
-parser.add_argument('-bs', '--batch-size', type=int, required=False, default=128, help ="Give the batch size, default = 128")
-parser.add_argument('-lr', '--learning-rate', type=float, required=False, default=5e-3, help ="Give the learning rate, default = 1e-3") 
-parser.add_argument('-d', '--data', type=str, required=False, default="data", help = "Give the directory of the data")
-parser.add_argument('-p', '--patience', type=str, required=False, default="0.01:50",
-                    help="Patience format:  delta_val:epochs")
-parser.add_argument('-m', '--model', type=str, required=False)
-parser.add_argument('-ev', '--evaluate', action="store_true")
-parser.add_argument('-sst', '--save-steps', action="store_true")
-parser.add_argument('-dr', '--decay-rate', type=float, required=False, default=0, help ="Give the decay rate")
-parser.add_argument('-ms', '--model-schema', type=str, required=False, default = "best_model", help="Model structure")
-parser.add_argument('-o', '--output', type=str, required=False, default="risultati_modelli")
-
-args = parser.parse_args()
 pd.options.mode.chained_assignment = None
 
-def computation():
+def computation(args):
     x_train_scaled, x_validation_scaled, x_test_scaled, y_train_scaled, y_validation, y_validation_scaled = preprocessing_data()
     if args.model == None:
         model = getModel(args.model_schema, x_train_scaled.shape[1])
@@ -108,13 +92,13 @@ def computation():
         
 
     ################## COMPUTE THE CONFUSION MATRIX AND THE LOSS ON THE VALIDATION #######
-    loss_plotter(history)
+    loss_plotter(history, args.output)
 
     scaler_y = joblib.load("scaler_y.pkl")
     # Importo lo scaler per usare al contrario le predizioni
     y_validation_scaled_pred = model.predict(x_validation_scaled)
     y_validation_pred =  scaler_y.inverse_transform(y_validation_scaled_pred)
-    scatter_plotter(y_validation, y_validation_pred)
+    scatter_plotter(y_validation, y_validation_pred, args.output)
     
 
     ################# COMPUTE THE PREDICTION ON THE TEST #############

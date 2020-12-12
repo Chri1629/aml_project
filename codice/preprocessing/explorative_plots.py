@@ -6,10 +6,6 @@ import matplotlib.pyplot as plt
 import argparse
 import pandas as pd
 
-parser = argparse.ArgumentParser()
-parser.add_argument('-o', '--output', type=str, required=False, default="risultati_modelli")
-
-args = parser.parse_args()
 pd.options.mode.chained_assignment = None
 
 def target_distribution(df_train, df_validation):
@@ -34,7 +30,7 @@ def target_distribution(df_train, df_validation):
     plt.close(fig)
 
  
-def loss_plotter(history):
+def loss_plotter(history, output_path):
     '''
     Istogramma per disegnare le distribuzioni delle variabili
     @params:
@@ -51,10 +47,10 @@ def loss_plotter(history):
     plt.title("Loss function", size =25)
     plt.grid()
     plt.show()
-    fig.savefig(args.output + '/pics/loss_plot.png', bbox_inches='tight')
+    fig.savefig(output_path + '/pics/loss_plot.png', bbox_inches='tight')
     plt.close(fig)
 
-def scatter_plotter(y, pred):
+def scatter_plotter(y, pred, output_path):
     '''
     Istogramma per disegnare le distribuzioni delle variabili
     @params:
@@ -76,7 +72,7 @@ def scatter_plotter(y, pred):
     plt.ioff()
     plt.grid()
     plt.show()
-    fig.savefig(args.output+ '/pics/scatter_plot.png', bbox_inches='tight')
+    fig.savefig(output_path + '/pics/scatter_plot.png', bbox_inches='tight')
     plt.close(fig)
 
 def histo_plot(df1, df2, df3):
