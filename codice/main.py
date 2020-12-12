@@ -17,7 +17,7 @@ parser.add_argument('-ev', '--evaluate', action="store_true")
 parser.add_argument('-sst', '--save-steps', action="store_true")
 parser.add_argument('-dr', '--decay-rate', type=float, required=False, default=0, help ="Give the decay rate")
 parser.add_argument('-ms', '--model-schema', type=str, required=False, default = "best_model", help="Model structure")
-parser.add_argument('-o', '--output', type=str, required=False, default="risultati_modelli/best_model")
+parser.add_argument('-o', '--output', type=str, required=False, default="risultati_modelli")
 
 args = parser.parse_args()
 pd.options.mode.chained_assignment = None
