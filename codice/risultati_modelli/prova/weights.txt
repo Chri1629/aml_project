@@ -1,0 +1,6 @@
+Layers name: dense_4/kernel:0
+Layers kernel shape: (8, 1)
+Kernel: Tensor("strided_slice:0", shape=(1,), dtype=float32)
+Layers name: dense_4/bias:0
+Layers kernel shape: (1,)
+Kernel: <tf.Variable 'dense_4/bias:0' shape=(1,) dtype=float32>
