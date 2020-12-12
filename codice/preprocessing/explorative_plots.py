@@ -20,25 +20,16 @@ def target_distribution(df_train, df_validation):
         df_train:        - Required   : Variabile di target del train
         df_validation:   - Required   : Variabile di target del train
     '''
-    
     fig = plt.figure(figsize = (15,8))
-    plt.suptitle("Distribution of target variable", size = 15)
-    plt.subplot(1,2,1)
-    plt.hist(df_train, bins = 100, color = "skyblue", alpha = 0.7)
-    plt.title("Training", size = 12)
+    plt.hist(df_train, bins = 300, color = "skyblue", alpha = 0.7, label = "Train")
+    plt.hist(df_validation, bins = 300, color = "orange", alpha = 0.7, label = "Validation")
     plt.xticks(fontsize = 10)
     plt.yticks(fontsize = 10)
     plt.xlabel('Value', size = 10)
     plt.ylabel('Count', size = 10)
     plt.grid()
-    plt.subplot(1,2,2)
-    plt.hist(df_validation, bins = 100, color = "orange", alpha = 0.7)
-    plt.title("Validation", size = 12)
-    plt.xticks(fontsize = 10)
-    plt.yticks(fontsize = 10)
-    plt.xlabel('Value', size = 10)
-    plt.ylabel('Count', size = 10)
-    plt.grid()
+    plt.legend(fontsize = 12)
+    plt.title("Distribution of target variable", size = 15)
     fig.savefig("explorative_pics/target_distribution.png", dpi =100, bbox_inches='tight')
     plt.close(fig)
 
