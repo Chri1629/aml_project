@@ -12,6 +12,7 @@ import pandas as pd
 import haversine as hs
 import joblib
 import os
+import urllib.request, json 
 
 def check_missing(df):
     for colonna in df.columns:
@@ -66,6 +67,13 @@ def distance_from(loc1,loc2):
     return round(dist,2)
 
 
+def distance_from2(pickup_long, pickup_lat, dropoff_long, dropoff_lat):
+    with urllib.request.urlopen("http://localhost:5000/route/v1/driving/{},{};{},{}?overview=false".format(pickup_long, pickup_lat, dropoff_long, dropoff_lat)) as url: 
+        data = json.loads(url.read().decode())
+        distance = data["routes"][0]["legs"][0]["distance"]
+    return distance
+
+
 def scale_data(df):
     col_names = ['dis', 'x_pickup', 'y_pickup', 'z_pickup', 'x_dropoff', 'y_dropoff', 'z_dropoff']
     features = df[col_names]
@@ -89,6 +97,8 @@ def compute_distance(df_train, df_validation, df_test):
 
         df_test['coor_pickup'] = list(zip(df_test['pickup_latitude'], df_test['pickup_longitude']))
         df_test['coor_dropoff'] = list(zip(df_test['dropoff_latitude'], df_test['dropoff_longitude']))
+
+        #df["distance"] = df.apply(lambda row: distance_from(row["pickup_longitude"],row["pickup_latitude"],row["dropoff_longitude"],row["dropoff_latitude"]), axis = 1)
 
         # Calcola la distanza
         df_train['dis'] = df_train.apply(lambda row: distance_from(row['coor_dropoff'], row['coor_pickup']), axis = 1)
