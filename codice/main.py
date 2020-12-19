@@ -40,6 +40,7 @@ def main():
     mkdir_p(args.output)
     mkdir_p(args.output + "/pics")
     computation(args)
+    
 
 if __name__ == "__main__":
     start_time = time.time()
