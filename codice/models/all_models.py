@@ -5,9 +5,9 @@ from keras.optimizers import Adam, SGD
 from keras import metrics
 from keras import losses
 from keras import regularizers
-from keras.initializers import RandomUniform
+#from keras.initializers import RandomUniform
 
-initializer = RandomUniform(seed=1234)
+# initializer = RandomUniform(seed=1234)
 
 def getModel(id, input_dim):
 

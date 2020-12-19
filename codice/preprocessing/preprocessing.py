@@ -2,7 +2,7 @@ from .open import open_data
 from .explorative_plots import histo_plot
 from .explorative_plots import target_distribution
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder
 from sklearn.utils import class_weight
 from sklearn.metrics import mean_squared_error
 from sklearn.compose import ColumnTransformer
@@ -40,12 +40,12 @@ def delete_outliers(df_train):
         y_train_no_out = train_no_out["trip_duration"]
 
         # Salva in numpy array
-        x_train_no_out.to_csv('../data/x_train_no_out.csv')
-        y_train_no_out.to_csv('../data/y_train_no_out.csv')
+        x_train_no_out.to_csv('../data/x_train_no_out.csv', index = False)
+        y_train_no_out.to_csv('../data/y_train_no_out.csv', index = False)
         
     # Se i dati sono già presenti li carico
-    x_train_no_out = pd.read_csv('../data/x_train_no_out.csv', sep = ",", index_col=0)
-    y_train_no_out = pd.read_csv('../data/y_train_no_out.csv', sep = ",", index_col=0)
+    x_train_no_out = pd.read_csv('../data/x_train_no_out.csv', sep = ",")
+    y_train_no_out = pd.read_csv('../data/y_train_no_out.csv', sep = ",")
     return x_train_no_out, y_train_no_out
 
 def fix_lat_long(df):
@@ -61,6 +61,16 @@ def fix_lat_long(df):
 
     return df
 
+
+def add_date_info(x_df):
+    # aggiunge informazioni alla data
+    # date, hour, dayweek
+    x_df['pickup_date'] = pd.to_datetime(x_df['pickup_datetime']).dt.date
+    x_df['pickup_hour'] = pd.to_datetime(x_df['pickup_datetime']).dt.hour
+    x_df['pickup_weekday'] = pd.to_datetime(x_df['pickup_date']).dt.weekday
+
+    return x_df
+
 def distance_from(loc1,loc2): 
     # Calcola la distanza su due punti della mappa
     dist=hs.haversine(loc1,loc2)
@@ -75,20 +85,26 @@ def distance_from2(pickup_long, pickup_lat, dropoff_long, dropoff_lat):
 
 
 def scale_data(df):
-    col_names = ['dis', 'x_pickup', 'y_pickup', 'z_pickup', 'x_dropoff', 'y_dropoff', 'z_dropoff']
-    features = df[col_names]
+
     ct = ColumnTransformer([
-            ('somename', StandardScaler(), ['dis', 'x_pickup', 'y_pickup', 'z_pickup', 'x_dropoff', 'y_dropoff', 'z_dropoff'])], 
+            ('somename', StandardScaler(), ['dis', 'x_pickup', 'y_pickup', 'z_pickup', 'x_dropoff', 'y_dropoff', 'z_dropoff']),
+            ('categorical', OneHotEncoder(), ['pickup_hour', 'pickup_weekday'])],
             remainder='passthrough')
 
-    df[col_names] = ct.fit_transform(features)
-    # Vanno concatenate nel modo giusto, cosa che non fa al momento
+    df = ct.fit_transform(df)
+
     return df
 
 
 def compute_distance(df_train, df_validation, df_test):
     # Crea la coppia di coordinate
     if not os.path.exists('../data/x_train_no_out_dist.csv'):
+
+        # aggiungo dati ora e giorno settimana
+        df_train = add_date_info(df_train)
+        df_validation = add_date_info(df_validation)
+        df_test = add_date_info(df_test)
+
         df_train['coor_pickup'] = list(zip(df_train['pickup_latitude'], df_train['pickup_longitude']))
         df_train['coor_dropoff'] = list(zip(df_train['dropoff_latitude'], df_train['dropoff_longitude']))
 
@@ -109,14 +125,14 @@ def compute_distance(df_train, df_validation, df_test):
         df_validation = df_validation.drop(['coor_pickup', 'coor_dropoff'], axis = 1)
         df_test = df_test.drop(['coor_pickup', 'coor_dropoff'], axis = 1)
         # Salvo il df
-        df_train.to_csv('../data/x_train_no_out_dist.csv')
-        df_validation.to_csv('../data/x_validation_no_out_dist.csv')
-        df_test.to_csv('../data/x_test_no_out_dist.csv')
+        df_train.to_csv('../data/x_train_no_out_dist.csv', index = False)
+        df_validation.to_csv('../data/x_validation_no_out_dist.csv', index = False)
+        df_test.to_csv('../data/x_test_no_out_dist.csv', index = False)
         
     # Se i dati sono già presenti li carico
-    df_train = pd.read_csv('../data/x_train_no_out_dist.csv', sep = ",", index_col=0) 
-    df_validation = pd.read_csv('../data/x_validation_no_out_dist.csv', sep = ",", index_col=0) 
-    df_test = pd.read_csv('../data/x_test_no_out_dist.csv', sep = ",", index_col=0) 
+    df_train = pd.read_csv('../data/x_train_no_out_dist.csv', sep = ",") 
+    df_validation = pd.read_csv('../data/x_validation_no_out_dist.csv', sep = ",") 
+    df_test = pd.read_csv('../data/x_test_no_out_dist.csv', sep = ",") 
 
     return df_train, df_validation, df_test
 
@@ -150,8 +166,8 @@ def preprocessing_data():
     
     histo_plot(train_for_distribution, validation_for_distribution, test_for_distribution)
     target_distribution(y_train['trip_duration'], y_validation['trip_duration'])
-
-    print("************* COMPUTE DISTANCE BETWEEN POINTS ************ \n")  
+   
+    print("************* COMPUTE DISTANCE BETWEEN POINTS + DATE-HOUR ************ \n")  
     x_train, x_validation, x_test = compute_distance(x_train, x_validation, x_test)
 
     print("************* FIX LATITUDE AND LONGITUDE ************ \n")   
@@ -163,42 +179,41 @@ def preprocessing_data():
     x_train = pd.get_dummies(x_train, columns = ['passenger_count','store_and_fwd_flag'])
     x_validation = pd.get_dummies(x_validation, columns = ['passenger_count','store_and_fwd_flag'])
     x_test = pd.get_dummies(x_test, columns = ['passenger_count','store_and_fwd_flag'])
+    
+    print("************* FIX THE CLASSES IN THE TEST SET ************ \n")
+    # Per trattare le cose in questo modo devo aggiungere le colonne fittizie a test per la classe 7 e 8 che non sono presenti in
+    # test
+    x_validation.insert(loc=14, column='passenger_count_7', value=0)
+    x_validation.insert(loc=15, column='passenger_count_8', value=0)
+    x_validation.insert(loc=16, column='passenger_count_9', value=0)
+
+
+    x_test.insert(loc=14, column='passenger_count_7', value=0)
+    x_test.insert(loc=15, column='passenger_count_8', value=0)
+
+    print("************* DROP UNUSEFUL COLUMNS ************ \n")
+
+    # Droppiamo momentaneamente le colonne che non so come trattare in modo da lavorarci. Poi le utilizzeremo meglio
+    # Sarebbe interessante secondo me tenere solo l'ora del timestemp perché penso che sia la più indicativa 
+    
+    x_train = x_train.iloc[:,7:]
+    x_validation = x_validation.iloc[:,7:]
+    x_test = x_test.iloc[:,6:]
 
     print("************* SCALE THE DATA ************ \n")
     x_train_scaled = scale_data(x_train)
     x_validation_scaled = scale_data(x_validation)
     x_test_scaled = scale_data(x_test)
-
     
     # Ora scala la variabile di target
     sc_y = StandardScaler()
-    y_train_scaled = sc_y.fit_transform(y_train)
+    y_train_scaled = sc_y.fit_transform(y_train) ##################### QUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
     y_validation_scaled = sc_y.fit_transform(y_validation)
 
     # Salva lo scaler di y per poter tornare indietro
     joblib.dump(sc_y,  "scaler_y.pkl")
 
     y_train_scaled = y_train_scaled.reshape(-1,1)
-    y_validation_scaled = y_validation_scaled.reshape(-1,1)
-
-    print("************* DROP UNUSEFUL COLUMNS ************ \n")
-
-    # Droppiamo momentaneamente le colonne che non so come trattare in modo da lavorarci. Poi le utilizzeremo meglio
-    # Sarebbe interessante secondo me tenere solo l'ora del timestemp perché penso che sia la più indicativa 
-
-    x_train_scaled = x_train_scaled.iloc[:,6:]
-    x_validation_scaled = x_validation_scaled.iloc[:,6:]
-    x_test_scaled = x_test_scaled.iloc[:,5:]
-
-    print("************* FIX THE CLASSES IN THE TEST SET ************ \n")
-    # Per trattare le cose in questo modo devo aggiungere le colonne fittizie a test per la classe 7 e 8 che non sono presenti in
-    # test
-    x_validation_scaled.insert(loc=14, column='passenger_count_7', value=0)
-    x_validation_scaled.insert(loc=15, column='passenger_count_8', value=0)
-    x_validation_scaled.insert(loc=16, column='passenger_count_9', value=0)
-
-
-    x_test_scaled.insert(loc=14, column='passenger_count_7', value=0)
-    x_test_scaled.insert(loc=15, column='passenger_count_8', value=0)
+    y_validation_scaled = y_validation_scaled.reshape(-1,1) 
 
     return x_train_scaled, x_validation_scaled, x_test_scaled, y_train_scaled, y_validation, y_validation_scaled

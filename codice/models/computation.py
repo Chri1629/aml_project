@@ -47,7 +47,28 @@ from .all_models import getModel
 pd.options.mode.chained_assignment = None
 
 def computation(args):
-    x_train_scaled, x_validation_scaled, x_test_scaled, y_train_scaled, y_validation, y_validation_scaled = preprocessing_data()
+
+    if not os.path.exists('../data/scaled/x_train_scaled.npy'):
+        x_train_scaled, x_validation_scaled, x_test_scaled, y_train_scaled, y_validation, y_validation_scaled = preprocessing_data()
+        np.save(arr = x_train_scaled, file = '../data/scaled/x_train_scaled.npy')
+        np.save(arr = x_validation_scaled, file = '../data/scaled/x_validation_scaled.npy')
+        np.save(arr = x_test_scaled, file = '../data/scaled/x_test_scaled.npy')
+        np.save(arr = y_train_scaled, file = '../data/scaled/y_train_scaled.npy')
+        np.save(arr = y_validation, file = '../data/scaled/y_validation.npy')
+        np.save(arr = y_validation_scaled, file = '../data/scaled/y_validation_scaled.npy')
+    else:
+        x_train_scaled = np.load('../data/scaled/x_train_scaled.npy')
+        x_validation_scaled = np.load('../data/scaled/x_validation_scaled.npy')
+        x_test_scaled = np.load('../data/scaled/x_test_scaled.npy')
+        y_train_scaled = np.load('../data/scaled/y_train_scaled.npy')
+        y_validation = np.load('../data/scaled/y_validation.npy')
+        y_validation_scaled = np.load('../data/scaled/y_validation_scaled.npy')
+    
+    print(f"Train shape: x:{x_train_scaled.shape}, y:{y_train_scaled.shape}")
+    print(f"Validation shape: x:{x_validation_scaled.shape}, y:{y_validation_scaled.shape}")
+    print(f"Test shape: x:{x_test_scaled.shape}")
+    
+    
     if args.model == None:
         model = getModel(args.model_schema, x_train_scaled.shape[1])
     else:
@@ -57,14 +78,26 @@ def computation(args):
 
     if not args.evaluate:
         # Training procedure
+        '''
         if args.save_steps:
             auto_save = ModelCheckpoint(args.output+"/current_model_epoch{epoch:02d}", monitor='val_loss',
-                        verbose=0, save_best_only=False, save_weights_only=False,
+                        verbose=0, save_best_only=False, save_weights_only=True,
                         mode='auto', period=1)
         else:
             auto_save = ModelCheckpoint(args.output +"/current_model", monitor='val_loss',
-                        verbose=0, save_best_only=True, save_weights_only=False,
+                        verbose=0, save_best_only=True, save_weights_only=True,
                         mode='auto', period=2)
+        '''
+
+        if args.save_steps:
+            auto_save = ModelCheckpoint(args.output+"/current_model_epoch", monitor='val_loss',
+                        verbose=0, save_best_only=True, save_weights_only=True,
+                        mode='auto')
+        else:
+            auto_save = ModelCheckpoint(args.output +"/current_model", monitor='val_loss',
+                        verbose=0, save_best_only=True, save_weights_only=True,
+                        mode='auto')
+
 
         min_delta = float(args.patience.split(":")[0])
         p_epochs = int(args.patience.split(":")[1])
@@ -117,3 +150,4 @@ def computation(args):
         f.write('Layers kernel shape: {}\n'.format(model.weights[-1].shape))
         f.write('Kernel: {}\n'.format(model.weights[-1]))
         f.close()
+    
