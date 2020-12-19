@@ -16,12 +16,12 @@ def getModel(id, input_dim):
 # <<<<<<<<<<<<<<<<<<<<<<<<<     RETI     <<<<<<<<<<<<<<<<<<<<<<<<<            
 
     if id=="best_model":
-        model.add(Dense(units=32, input_dim=input_dim, activation="relu"))
-        model.add(Dropout(0.2))
-        model.add(Dense(units=16,activation="relu"))
-        model.add(Dropout(0.2))
-        model.add(Dense(units=8,activation="relu"))
-        model.add(Dropout(0.2))
+        model.add(Dense(units=128, input_dim=input_dim, activation="relu"))
+        model.add(Dropout(0.5))
+        model.add(Dense(units=64,activation="relu"))
+        model.add(Dropout(0.5))
+        model.add(Dense(units=32,activation="relu"))
+        model.add(Dropout(0.5))
 
         model.add(Dense(1))
 
@@ -34,9 +34,9 @@ def getModel(id, input_dim):
     elif id=="regularized_best_model_l1":
         model.add(Dense(units=512, input_dim=input_dim, activation="relu"))
         model.add(Dropout(0.2))
-        model.add(Dense(units=256,activation="relu", kernel_initializer=initializer, kernel_regularizer=regularizers.l1(0.01), bias_regularizer=regularizers.l1(0.01)))
+        model.add(Dense(units=256,activation="relu"))
         model.add(Dropout(0.2))
-        model.add(Dense(units=128,activation="relu", kernel_initializer=initializer, kernel_regularizer=regularizers.l1(0.01), bias_regularizer=regularizers.l1(0.01)))
+        model.add(Dense(units=256,activation="relu"))        
         model.add(Dropout(0.2))
 
         model.add(Dense(2, activation = "sigmoid"))

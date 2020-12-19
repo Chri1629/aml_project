@@ -78,7 +78,7 @@ def computation(args):
 
     if not args.evaluate:
         # Training procedure
-        '''
+        
         if args.save_steps:
             auto_save = ModelCheckpoint(args.output+"/current_model_epoch{epoch:02d}", monitor='val_loss',
                         verbose=0, save_best_only=False, save_weights_only=True,
@@ -98,7 +98,7 @@ def computation(args):
                         verbose=0, save_best_only=True, save_weights_only=True,
                         mode='auto')
 
-
+        '''
         min_delta = float(args.patience.split(":")[0])
         p_epochs = int(args.patience.split(":")[1])
         early_stop = EarlyStopping(monitor='val_loss', min_delta=min_delta,
@@ -121,7 +121,7 @@ def computation(args):
                             validation_data = (x_validation_scaled, y_validation_scaled),
                             epochs=args.epoch, initial_epoch=args.initial_epoch,
                             batch_size=args.batch_size, shuffle=True,
-                            callbacks=[auto_save, early_stop, lr_sched, csv_logger])
+                            callbacks=[early_stop, lr_sched, csv_logger])
         
 
     ################## COMPUTE THE CONFUSION MATRIX AND THE LOSS ON THE VALIDATION #######
