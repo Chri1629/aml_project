@@ -30,7 +30,7 @@ def delete_outliers(df_train):
         # Prima elimino la data perché fa casino per eliminare out
         df_train_input = df_train.iloc[:,0:(len(df_train.columns)-1)]
         df_train_target = df_train.iloc[:,-1]    
-        target_no_out = df_train_target[np.abs(df_train_target-df_train_target.mean()) <= (3*df_train_target.std())]
+        target_no_out = df_train_target[np.abs(df_train_target-df_train_target.mean()) <= (1.9*df_train_target.std())]
 
         # Aggiungo nuovamente le altre colonne
         train_no_out = pd.merge(target_no_out, df_train_input, how = "inner", left_index=True, right_index=True)
@@ -84,6 +84,22 @@ def distance_from2(pickup_long, pickup_lat, dropoff_long, dropoff_lat):
     return distance
 
 
+def get_distance(lng1_r=None, lat1_r=None, 
+                            lng2_r=None, lat2_r=None  ):
+        lat = lat2_r - lat1_r
+        lng = lng2_r - lng1_r
+        d = np.sin(lat * 0.5) ** 2 + np.cos(lat1_r) * np.cos(lat2_r) * np.sin(lng * 0.5) ** 2
+        h = 2 * 6371 * np.arcsin(np.sqrt(d))
+        return h
+
+
+def get_distance_manhattan(lat1, lng1, lat2, lng2):
+    lat1_r, lng1_r, lat2_r, lng2_r = map( np.radians, (lat1, lng1, lat2, lng2))
+    a = get_distance(lng1_r, lat1_r, lng2_r, lat1_r )
+    b = get_distance(lng1_r, lat1_r, lng1_r, lat2_r )
+    return a + b 
+    
+
 def scale_data(df):
 
     ct = ColumnTransformer([
@@ -117,9 +133,13 @@ def compute_distance(df_train, df_validation, df_test):
         #df["distance"] = df.apply(lambda row: distance_from(row["pickup_longitude"],row["pickup_latitude"],row["dropoff_longitude"],row["dropoff_latitude"]), axis = 1)
 
         # Calcola la distanza
-        df_train['dis'] = df_train.apply(lambda row: distance_from(row['coor_dropoff'], row['coor_pickup']), axis = 1)
-        df_validation['dis'] = df_validation.apply(lambda row: distance_from(row['coor_dropoff'], row['coor_pickup']), axis = 1)
-        df_test['dis'] = df_test.apply(lambda row: distance_from(row['coor_dropoff'], row['coor_pickup']), axis = 1)
+        #df_train['dis'] = df_train.apply(lambda row: distance_from(row['coor_dropoff'], row['coor_pickup']), axis = 1)
+        #df_validation['dis'] = df_validation.apply(lambda row: distance_from(row['coor_dropoff'], row['coor_pickup']), axis = 1)
+        #df_test['dis'] = df_test.apply(lambda row: distance_from(row['coor_dropoff'], row['coor_pickup']), axis = 1)
+
+        df_train['dis'] = df_train.apply(lambda row: get_distance_manhattan(row["pickup_longitude"],row["pickup_latitude"],row["dropoff_longitude"],row["dropoff_latitude"]), axis = 1)
+        df_validation['dis'] = df_validation.apply(lambda row: get_distance_manhattan(row["pickup_longitude"],row["pickup_latitude"],row["dropoff_longitude"],row["dropoff_latitude"]), axis = 1)
+        df_test['dis'] = df_test.apply(lambda row: get_distance_manhattan(row["pickup_longitude"],row["pickup_latitude"],row["dropoff_longitude"],row["dropoff_latitude"]), axis = 1)
 
         df_train = df_train.drop(['coor_pickup', 'coor_dropoff'], axis = 1)
         df_validation = df_validation.drop(['coor_pickup', 'coor_dropoff'], axis = 1)
@@ -160,12 +180,12 @@ def preprocessing_data():
     
     print("************* PRODUCING PLOTS ************ \n")
     # Levo le date per disegnare e levo anche la data di dropoff nel train perché non è presente nel test
-    train_for_distribution = x_train.drop(['pickup_datetime', 'dropoff_datetime'],axis =1)
-    validation_for_distribution = x_validation.drop(['pickup_datetime', 'dropoff_datetime'],axis =1)
-    test_for_distribution = x_test.drop('pickup_datetime', axis =1)
+    #train_for_distribution = x_train.drop(['pickup_datetime', 'dropoff_datetime'],axis =1)
+    #validation_for_distribution = x_validation.drop(['pickup_datetime', 'dropoff_datetime'],axis =1)
+    #test_for_distribution = x_test.drop('pickup_datetime', axis =1)
     
-    histo_plot(train_for_distribution, validation_for_distribution, test_for_distribution)
-    target_distribution(y_train['trip_duration'], y_validation['trip_duration'])
+    #histo_plot(train_for_distribution, validation_for_distribution, test_for_distribution)
+    #target_distribution(y_train['trip_duration'], y_validation['trip_duration'])
    
     print("************* COMPUTE DISTANCE BETWEEN POINTS + DATE-HOUR ************ \n")  
     x_train, x_validation, x_test = compute_distance(x_train, x_validation, x_test)
@@ -183,13 +203,14 @@ def preprocessing_data():
     print("************* FIX THE CLASSES IN THE TEST SET ************ \n")
     # Per trattare le cose in questo modo devo aggiungere le colonne fittizie a test per la classe 7 e 8 che non sono presenti in
     # test
-    x_validation.insert(loc=14, column='passenger_count_7', value=0)
-    x_validation.insert(loc=15, column='passenger_count_8', value=0)
-    x_validation.insert(loc=16, column='passenger_count_9', value=0)
+    x_train.insert(loc=25, column='passenger_count_9', value=0)
+    #x_validation.insert(loc=14, column='passenger_count_7', value=0)
+    x_validation.insert(loc=24, column='passenger_count_8', value=0)
+    #x_validation.insert(loc=16, column='passenger_count_9', value=0)
 
 
-    x_test.insert(loc=14, column='passenger_count_7', value=0)
-    x_test.insert(loc=15, column='passenger_count_8', value=0)
+    x_test.insert(loc=22, column='passenger_count_7', value=0)
+    x_test.insert(loc=23, column='passenger_count_8', value=0)
 
     print("************* DROP UNUSEFUL COLUMNS ************ \n")
 
