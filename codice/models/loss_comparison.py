@@ -26,11 +26,12 @@ parser.add_argument('-c', '--comparison', type=str, required=False, default = ".
 args = parser.parse_args()
 
 
-def val_comparison(d1,d2):
+def val_comparison(d1,d2,d3):
     fig = plt.figure(figsize=(10,5)) 
     fig.add_subplot(121)
     plt.plot(d1["loss"], label= "best_model", color = "skyblue")
     plt.plot(d2["loss"], label= "prova", color = "red", alpha = 0.6)
+    plt.plot(d3["loss"], label= "prova2", color = "green", alpha = 0.6)
     plt.legend(fontsize = 15)
     plt.xticks( fontsize = 12)
     plt.yticks( fontsize = 12)
@@ -41,6 +42,7 @@ def val_comparison(d1,d2):
     fig.add_subplot(122)
     plt.plot(d1["val_loss"], label= "best_model", color = "skyblue")
     plt.plot(d2["val_loss"], label= "prova", color = "red", alpha = 0.6)
+    plt.plot(d3["val_loss"], label= "prova2", color = "green", alpha = 0.6)
     plt.legend(fontsize = 15)
     plt.xticks( fontsize = 12)
     plt.yticks( fontsize = 12)
@@ -58,6 +60,7 @@ def val_comparison(d1,d2):
 
 mod_1 = pd.read_csv(args.comparison+"/best_model/training.log")
 mod_2 = pd.read_csv(args.comparison+"/prova/training.log")
+mod_3 = pd.read_csv(args.comparison+"/prova2/training.log")
 
 #   Some useful plots
-val_comparison(mod_1,mod_2)
+val_comparison(mod_1,mod_2,mod_3)

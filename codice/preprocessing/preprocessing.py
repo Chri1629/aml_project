@@ -30,7 +30,8 @@ def delete_outliers(df_train):
         # Prima elimino la data perché fa casino per eliminare out
         df_train_input = df_train.iloc[:,0:(len(df_train.columns)-1)]
         df_train_target = df_train.iloc[:,-1]    
-        target_no_out = df_train_target[np.abs(df_train_target-df_train_target.mean()) <= (1.9*df_train_target.std())]
+        #target_no_out = df_train_target[np.abs(df_train_target-df_train_target.mean()) <= (1.9*df_train_target.std())]
+        target_no_out = df_train_target[df_train_target < df_train_target.quantile(.95)]
 
         # Aggiungo nuovamente le altre colonne
         train_no_out = pd.merge(target_no_out, df_train_input, how = "inner", left_index=True, right_index=True)
@@ -173,9 +174,13 @@ def preprocessing_data():
     # La variabile di target ha un bel po' di outlier quindi leviamoli
     x_train_no_out, y_train_no_out = delete_outliers(train)   
 
-    print("************* SPLITTING DATA ************ \n")        
+    print("************* CREATE DUMMIES ************ \n")
     x_test = test.copy()
+    
+    x_train_no_out = pd.get_dummies(x_train_no_out, columns = ['passenger_count','store_and_fwd_flag'])
+    x_test = pd.get_dummies(x_test, columns = ['passenger_count','store_and_fwd_flag'])
 
+    print("************* SPLITTING DATA ************ \n")        
     x_train, x_validation, y_train, y_validation = train_test_split(x_train_no_out, y_train_no_out, test_size=0.3, random_state=4242)
     
     print("************* PRODUCING PLOTS ************ \n")
@@ -194,21 +199,8 @@ def preprocessing_data():
     x_train = fix_lat_long(x_train)
     x_validation = fix_lat_long(x_validation)
     x_test = fix_lat_long(x_test)
-
-    print("************* CREATE DUMMIES ************ \n")
-    x_train = pd.get_dummies(x_train, columns = ['passenger_count','store_and_fwd_flag'])
-    x_validation = pd.get_dummies(x_validation, columns = ['passenger_count','store_and_fwd_flag'])
-    x_test = pd.get_dummies(x_test, columns = ['passenger_count','store_and_fwd_flag'])
     
     print("************* FIX THE CLASSES IN THE TEST SET ************ \n")
-    # Per trattare le cose in questo modo devo aggiungere le colonne fittizie a test per la classe 7 e 8 che non sono presenti in
-    # test
-    x_train.insert(loc=25, column='passenger_count_9', value=0)
-    #x_validation.insert(loc=14, column='passenger_count_7', value=0)
-    x_validation.insert(loc=24, column='passenger_count_8', value=0)
-    #x_validation.insert(loc=16, column='passenger_count_9', value=0)
-
-
     x_test.insert(loc=22, column='passenger_count_7', value=0)
     x_test.insert(loc=23, column='passenger_count_8', value=0)
 
@@ -217,9 +209,9 @@ def preprocessing_data():
     # Droppiamo momentaneamente le colonne che non so come trattare in modo da lavorarci. Poi le utilizzeremo meglio
     # Sarebbe interessante secondo me tenere solo l'ora del timestemp perché penso che sia la più indicativa 
     
-    x_train = x_train.iloc[:,7:]
-    x_validation = x_validation.iloc[:,7:]
-    x_test = x_test.iloc[:,6:]
+    x_train = x_train.iloc[:,6:].drop(['pickup_date'], axis = 1)
+    x_validation = x_validation.iloc[:,6:].drop(['pickup_date'], axis = 1)
+    x_test = x_test.iloc[:,5:].drop(['pickup_date'], axis = 1)
 
     print("************* SCALE THE DATA ************ \n")
     x_train_scaled = scale_data(x_train)
@@ -228,7 +220,7 @@ def preprocessing_data():
     
     # Ora scala la variabile di target
     sc_y = StandardScaler()
-    y_train_scaled = sc_y.fit_transform(y_train) ##################### QUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    y_train_scaled = sc_y.fit_transform(y_train) 
     y_validation_scaled = sc_y.fit_transform(y_validation)
 
     # Salva lo scaler di y per poter tornare indietro
