@@ -13,6 +13,10 @@ import haversine as hs
 import joblib
 import os
 import urllib.request, json 
+# geopandas for county
+import geopandas
+import geopandas.tools
+from shapely.geometry import Point
 
 def check_missing(df):
     for colonna in df.columns:
@@ -72,6 +76,23 @@ def add_date_info(x_df):
 
     return x_df
 
+def add_county(df):
+    df["pick_geometry"] = df.apply(lambda row: Point(row["pickup_longitude"], row["pickup_latitude"]), axis=1)
+    df = geopandas.GeoDataFrame(df, geometry="pick_geometry")
+
+    map_data = geopandas.GeoDataFrame.from_file("../data/map_files/ZillowNeighborhoods-NY.shp")
+    # Drop tutte le colonne tranne conty e geometry
+    map_data = map_data[["County", "geometry"]]
+    # faccio lo spatial join con il poligono
+    gdf = geopandas.tools.sjoin(df, map_data, how="left")
+    gdf.drop_duplicates(subset = ["id"], inplace = True)
+    # add external category
+    gdf["County"].fillna(value = "External", inplace = True)
+    # rimuovo colonne inutili
+    df_out = pd.DataFrame(gdf.drop(columns = ["pick_geometry", "index_right"]))
+
+    return df_out
+
 def distance_from(loc1,loc2): 
     # Calcola la distanza su due punti della mappa
     dist=hs.haversine(loc1,loc2)
@@ -105,7 +126,7 @@ def scale_data(df):
 
     ct = ColumnTransformer([
             ('somename', StandardScaler(), ['dis', 'x_pickup', 'y_pickup', 'z_pickup', 'x_dropoff', 'y_dropoff', 'z_dropoff']),
-            ('categorical', OneHotEncoder(), ['pickup_hour', 'pickup_weekday'])],
+            ('categorical', OneHotEncoder(), ['pickup_hour', 'pickup_weekday', 'County'])],
             remainder='passthrough')
 
     df = ct.fit_transform(df)
@@ -174,9 +195,11 @@ def preprocessing_data():
     # La variabile di target ha un bel po' di outlier quindi leviamoli
     x_train_no_out, y_train_no_out = delete_outliers(train)   
 
+    print("************** ADD COUNTY INFORMATION **************** \n")
+    x_train_no_out = add_county(x_train_no_out)
+    x_test = add_county(test)
+       
     print("************* CREATE DUMMIES ************ \n")
-    x_test = test.copy()
-    
     x_train_no_out = pd.get_dummies(x_train_no_out, columns = ['passenger_count','store_and_fwd_flag'])
     x_test = pd.get_dummies(x_test, columns = ['passenger_count','store_and_fwd_flag'])
 
