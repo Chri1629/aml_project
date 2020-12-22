@@ -3,7 +3,6 @@ import pandas as pd
 from preprocessing.preprocessing import preprocessing_data
 from preprocessing.explorative_plots import loss_plotter
 from preprocessing.explorative_plots import scatter_plotter
-from keras import *
 import tensorflow as tf
 import pandas as pd
 import numpy as np
@@ -15,7 +14,6 @@ import seaborn as sns
 import joblib
 import argparse
 import os
-from tensorflow import keras
 
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
@@ -26,27 +24,33 @@ from sklearn.compose import ColumnTransformer
 from sklearn import metrics
 
 
-from keras.layers import Activation
-from keras.utils.generic_utils import get_custom_objects
-from keras import backend as K
-from keras import losses
-from keras.callbacks import EarlyStopping, History
-from keras.activations import relu
-from keras.models import Sequential
-from keras.layers import Dense, Activation, Dropout
-from keras.utils import to_categorical
+from tensorflow.keras.layers import Activation
+from tensorflow.keras import backend as K
+from tensorflow.keras import losses
+from tensorflow.keras.callbacks import EarlyStopping, History
+from tensorflow.keras.activations import relu
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Activation, Dropout
+from tensorflow.keras.utils import to_categorical
 history = History()
-from keras.callbacks import *
-from keras.models import Sequential, load_model
-from keras.activations import relu
-from keras.layers import Dense, Dropout
-from keras.optimizers import Adam, SGD
-from keras import metrics
+from tensorflow.keras.callbacks import *
+from tensorflow.keras.models import Sequential, load_model
+from tensorflow.keras.activations import relu
+from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.optimizers import Adam, SGD
+from tensorflow.keras import metrics
 from .all_models import getModel
 
 pd.options.mode.chained_assignment = None
 
+
+
 def computation(args):
+
+    if tf.test.gpu_device_name(): 
+        print('Using default GPU device:{}'.format(tf.test.gpu_device_name())) 
+    else: 
+        print("Not using GPU.")
 
     if not os.path.exists('../data/scaled/x_train_scaled.npy'):
         x_train_scaled, x_validation_scaled, x_test_scaled, y_train_scaled, y_validation, y_validation_scaled = preprocessing_data()
@@ -79,7 +83,7 @@ def computation(args):
     if not args.evaluate:
         # Training procedure
         
-        if args.save_steps:
+        '''if args.save_steps:
             auto_save = ModelCheckpoint(args.output+"/current_model_epoch{epoch:02d}", monitor='val_loss',
                         verbose=0, save_best_only=False, save_weights_only=True,
                         mode='auto', period=1)
@@ -98,7 +102,7 @@ def computation(args):
                         verbose=0, save_best_only=True, save_weights_only=True,
                         mode='auto')
 
-        '''
+        
         min_delta = float(args.patience.split(":")[0])
         p_epochs = int(args.patience.split(":")[1])
         early_stop = EarlyStopping(monitor='val_loss', min_delta=min_delta,

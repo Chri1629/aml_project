@@ -1,10 +1,10 @@
-from keras.models import Sequential, load_model
-from keras.activations import relu
-from keras.layers import Dense, LeakyReLU, Dropout
-from keras.optimizers import Adam, SGD
-from keras import metrics
-from keras import losses
-from keras import regularizers
+from tensorflow.keras.models import Sequential, load_model
+from tensorflow.keras.activations import relu
+from tensorflow.keras.layers import Dense, LeakyReLU, Dropout
+from tensorflow.keras.optimizers import Adam, SGD
+from tensorflow.keras import metrics
+from tensorflow.keras import losses
+from tensorflow.keras import regularizers
 #from keras.initializers import RandomUniform
 
 # initializer = RandomUniform(seed=1234)
@@ -46,5 +46,25 @@ def getModel(id, input_dim):
                     metrics = ['accuracy'])
     
         print(model.summary())  
+
+    elif id=="fede1":
+        model.add(Dense(units=1024, input_dim=input_dim, activation="relu"))
+        model.add(Dropout(0.4))
+        model.add(Dense(units=512,activation="relu"))
+        model.add(Dropout(0.4))
+        model.add(Dense(units=512,activation="relu"))        
+        model.add(Dropout(0.4))
+        model.add(Dense(units=256,activation="relu"))
+        model.add(Dropout(0.4))
+        model.add(Dense(units=256,activation="relu"))        
+        model.add(Dropout(0.4))
+
+        model.add(Dense(1))
+
+        model.compile(loss=losses.mean_squared_error,
+                    optimizer='adam',
+                    metrics = ['mse'])
+    
+        print(model.summary())
     
     return model
