@@ -71,10 +71,6 @@ def computation(args):
     print(f"Train shape: x:{x_train_scaled.shape}, y:{y_train_scaled.shape}")
     print(f"Validation shape: x:{x_validation_scaled.shape}, y:{y_validation_scaled.shape}")
     print(f"Test shape: x:{x_test_scaled.shape}")
-    
-    #Remove outlier point (see notebook for info)
-    np.delete(y_validation_scaled, 104134)
-    np.delete(x_validation_scaled, 104134)
 
     if args.model == None:
         model = getModel(args.model_schema, x_train_scaled.shape[1])

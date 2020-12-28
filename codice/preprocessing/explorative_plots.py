@@ -225,13 +225,13 @@ def maps(df):
     plt.close()
 
 
-train_df = pd.read_csv("../../data/x_train_no_out_dist.csv")
-original_train_df =  pd.read_csv("../../data/train.csv")
-y_train = pd.read_csv("../../data/y_train_no_out.csv")
-y_validation = np.load("../../data/scaled/y_validation.npy")
+#train_df = pd.read_csv("../../data/x_train_no_out_dist.csv")
+#original_train_df =  pd.read_csv("../../data/train.csv")
+#y_train = pd.read_csv("../../data/y_train_no_out.csv")
+#y_validation = np.load("../../data/scaled/y_validation.npy")
 
-target_distribution(y_train['trip_duration'], y_validation)
-passenger_trips(original_train_df)
-maps(train_df)
-pickup_dropoff(train_df)
-weekday_trips(train_df)
+#target_distribution(y_train['trip_duration'], y_validation)
+#passenger_trips(original_train_df)
+#maps(train_df)
+#pickup_dropoff(train_df)
+#weekday_trips(train_df)

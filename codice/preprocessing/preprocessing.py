@@ -1,6 +1,5 @@
 from .open import open_data
-from .explorative_plots import histo_plot
-from .explorative_plots import target_distribution
+
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder
 from sklearn.utils import class_weight
@@ -34,7 +33,7 @@ def delete_outliers(df_train):
         # Prima elimino la data perché fa casino per eliminare out
         df_train_input = df_train.iloc[:,0:(len(df_train.columns)-1)]
         df_train_target = df_train.iloc[:,-1]    
-        target_no_out = df_train_target[(df_train_target < df_train_target.quantile(.95)) & (df_train_target > 20)]
+        target_no_out = df_train_target[(df_train_target < df_train_target.quantile(.95)) & (df_train_target > 10)]
         
         # Aggiungo nuovamente le altre colonne
         train_no_out = pd.merge(target_no_out, df_train_input, how = "inner", left_index=True, right_index=True)
@@ -150,16 +149,15 @@ def compute_distance(df_train, df_validation, df_test):
         df_test['coor_pickup'] = list(zip(df_test['pickup_latitude'], df_test['pickup_longitude']))
         df_test['coor_dropoff'] = list(zip(df_test['dropoff_latitude'], df_test['dropoff_longitude']))
 
-        #df["distance"] = df.apply(lambda row: distance_from(row["pickup_longitude"],row["pickup_latitude"],row["dropoff_longitude"],row["dropoff_latitude"]), axis = 1)
-
-        # Calcola la distanza
-        #df_train['dis'] = df_train.apply(lambda row: distance_from(row['coor_dropoff'], row['coor_pickup']), axis = 1)
-        #df_validation['dis'] = df_validation.apply(lambda row: distance_from(row['coor_dropoff'], row['coor_pickup']), axis = 1)
-        #df_test['dis'] = df_test.apply(lambda row: distance_from(row['coor_dropoff'], row['coor_pickup']), axis = 1)
-
         df_train['dis'] = df_train.apply(lambda row: get_distance_manhattan(row["pickup_longitude"],row["pickup_latitude"],row["dropoff_longitude"],row["dropoff_latitude"]), axis = 1)
         df_validation['dis'] = df_validation.apply(lambda row: get_distance_manhattan(row["pickup_longitude"],row["pickup_latitude"],row["dropoff_longitude"],row["dropoff_latitude"]), axis = 1)
         df_test['dis'] = df_test.apply(lambda row: get_distance_manhattan(row["pickup_longitude"],row["pickup_latitude"],row["dropoff_longitude"],row["dropoff_latitude"]), axis = 1)
+
+        print('outliers in distance in df_train:', len(df_train[df_train['dis'] > 100]))
+        print('outliers in distance in df_validation:', len(df_validation[df_validation['dis'] > 100]))
+
+        df_train = df_train[df_train['dis'] < 100]
+        df_validation = df_validation[df_validation['dis'] < 100]
 
         df_train = df_train.drop(['coor_pickup', 'coor_dropoff'], axis = 1)
         df_validation = df_validation.drop(['coor_pickup', 'coor_dropoff'], axis = 1)
@@ -215,6 +213,9 @@ def preprocessing_data():
    
     print("************* COMPUTE DISTANCE BETWEEN POINTS + DATE-HOUR ************ \n")  
     x_train, x_validation, x_test = compute_distance(x_train, x_validation, x_test)
+    y_train = y_train.merge(x_train, left_index=True, right_index=True).iloc[:,0]
+    y_validation = y_validation.merge(x_validation, left_index=True, right_index=True).iloc[:,0]
+
 
     print("************* FIX LATITUDE AND LONGITUDE ************ \n")   
     x_train = fix_lat_long(x_train)
