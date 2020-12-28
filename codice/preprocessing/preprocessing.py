@@ -34,13 +34,11 @@ def delete_outliers(df_train):
         # Prima elimino la data perché fa casino per eliminare out
         df_train_input = df_train.iloc[:,0:(len(df_train.columns)-1)]
         df_train_target = df_train.iloc[:,-1]    
-        #target_no_out = df_train_target[np.abs(df_train_target-df_train_target.mean()) <= (1.9*df_train_target.std())]
-        target_no_out = df_train_target[df_train_target < df_train_target.quantile(.95)]
-
+        target_no_out = df_train_target[(df_train_target < df_train_target.quantile(.95)) & (df_train_target > 20)]
+        
         # Aggiungo nuovamente le altre colonne
         train_no_out = pd.merge(target_no_out, df_train_input, how = "inner", left_index=True, right_index=True)
-
-        #x_train_no_out = train_no_out.iloc[:,0:(len(train_no_out.columns)-1)]
+        
         x_train_no_out = train_no_out.drop("trip_duration", axis = 1)
         y_train_no_out = train_no_out["trip_duration"]
 

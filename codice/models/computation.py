@@ -72,7 +72,10 @@ def computation(args):
     print(f"Validation shape: x:{x_validation_scaled.shape}, y:{y_validation_scaled.shape}")
     print(f"Test shape: x:{x_test_scaled.shape}")
     
-    
+    #Remove outlier point (see notebook for info)
+    np.delete(y_validation_scaled, 104134)
+    np.delete(x_validation_scaled, 104134)
+
     if args.model == None:
         model = getModel(args.model_schema, x_train_scaled.shape[1])
     else:
@@ -147,6 +150,7 @@ def computation(args):
     y_validation_scaled_pred = model.predict(x_validation_scaled)
     y_validation_pred =  scaler_y.inverse_transform(y_validation_scaled_pred)
     scatter_plotter(y_validation, y_validation_pred, args.output)
+    np.save(arr = y_validation_pred, file = args.output+'/y_val_pred.npy')
     
 
     ################# COMPUTE THE PREDICTION ON THE TEST #############
