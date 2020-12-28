@@ -118,11 +118,11 @@ def computation(args):
             if epoch <= 7:
                 lr = args.learning_rate
             if epoch > 7:
-                lr = 0.001
-            if epoch > 13:
                 lr = 0.0005
-            if epoch > 23:
+            if epoch > 22:
                 lr = 0.00005
+            #if epoch > 23:
+            #    lr = 0.00005
             return lr
 
         lr_sched = LearningRateScheduler(lr_scheduler_fede4, verbose=1)
