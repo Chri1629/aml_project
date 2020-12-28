@@ -69,15 +69,15 @@ def getModel(id, input_dim):
         model.add(Dense(units=64, input_dim=input_dim, activation="relu"))
         model.add(BatchNormalization())
         model.add(ReLU())
-        model.add(Dropout(0.2))
+        model.add(Dropout(0.5))
         model.add(Dense(32, activation='relu'))
         model.add(BatchNormalization())
         model.add(ReLU())
-        model.add(Dropout(0.2))
+        model.add(Dropout(0.5))
         model.add(Dense(16, activation='relu'))
         model.add(BatchNormalization())
         model.add(ReLU())
-        model.add(Dropout(0.2))
+        model.add(Dropout(0.5))
         model.add(Dense(1))
 
         model.compile(loss=losses.mean_squared_error,
