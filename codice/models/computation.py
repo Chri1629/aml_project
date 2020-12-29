@@ -110,18 +110,25 @@ def computation(args):
         #def reduceLR (epoch):
         #    return args.learning_rate * (1 / (1 + epoch*args.decay_rate))
 
-        def lr_scheduler_fede4(epoch, lr):
+        def lr_scheduler_fede4_2(epoch, lr):
             if epoch <= 7:
                 lr = args.learning_rate
             if epoch > 7:
                 lr = 0.001
-            if epoch > 22:
+            if epoch > 12:
+                lr = 0.0007
+            if epoch > 20:
                 lr = 0.0005
-            #if epoch > 23:
-            #    lr = 0.00005
             return lr
 
-        lr_sched = LearningRateScheduler(lr_scheduler_fede4, verbose=1)
+        def lr_scheduler_fede4_3(epoch, lr):
+            if epoch <= 15:
+                lr = args.learning_rate
+            if epoch > 15:
+                lr = 0.001
+            return lr
+
+        lr_sched = LearningRateScheduler(lr_scheduler_fede4_3, verbose=1)
 
         csv_logger = CSVLogger(args.output +'/training.log')
 

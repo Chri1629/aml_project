@@ -188,8 +188,8 @@ def preprocessing_data():
         x_train = pd.read_csv('../data/x_train_no_out_dist.csv')
         x_test = pd.read_csv('../data/x_test_no_out_dist.csv')
 
-    print('outliers in distance in df_train:', len(x_train[x_train['dis'] > 100]))
-    x_train = x_train[x_train['dis'] < 100]
+    print('outliers in distance in df_train:', len(x_train[x_train['dis'] > 80]))
+    x_train = x_train[x_train['dis'] < 80]
 
     print("************* FIX LATITUDE AND LONGITUDE ************ \n")   
     x_train = fix_lat_long(x_train)
