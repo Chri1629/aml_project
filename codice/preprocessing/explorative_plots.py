@@ -225,6 +225,21 @@ def maps(df):
     plt.close()
 
 
+def maps_black(df):
+    fig = plt.subplots(figsize=(12,10))
+    s_marker = 5
+    alpha_dot = 1
+    plt.scatter( x= df["pickup_longitude"],
+    y= df["pickup_latitude"], s=s_marker, alpha=alpha_dot, color = "black", label = "New York")
+    plt.xlim(-74.1, -73.7)
+    plt.ylim(40.57, 40.93)
+    plt.tick_params(labelsize=10)
+    #plt.title(name, fontsize=18 )
+    plt.xlabel('Longitude', fontsize=12)
+    plt.ylabel('Latitude', fontsize=12)
+    fig.savefig("../explorative_pics/map_bw.png", dpi =100, bbox_inches='tight')
+    plt.close()
+
 #train_df = pd.read_csv("../../data/x_train_no_out_dist.csv")
 #original_train_df =  pd.read_csv("../../data/train.csv")
 #y_train = pd.read_csv("../../data/y_train_no_out.csv")
@@ -233,5 +248,6 @@ def maps(df):
 #target_distribution(y_train['trip_duration'], y_validation)
 #passenger_trips(original_train_df)
 #maps(train_df)
+#maps_black(train_df)
 #pickup_dropoff(train_df)
 #weekday_trips(train_df)
