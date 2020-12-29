@@ -1,6 +1,6 @@
 Layers name: dense_3/kernel:0
 Layers kernel shape: (16, 1)
-Kernel: [0.1059903]
+Kernel: [0.05123633]
 Layers name: dense_3/bias:0
 Layers kernel shape: (1,)
-Kernel: <tf.Variable 'dense_3/bias:0' shape=(1,) dtype=float32, numpy=array([-0.23239647], dtype=float32)>
+Kernel: <tf.Variable 'dense_3/bias:0' shape=(1,) dtype=float32, numpy=array([-0.25747892], dtype=float32)>

@@ -38,17 +38,15 @@ def delete_outliers(df_train):
         # Aggiungo nuovamente le altre colonne
         train_no_out = pd.merge(target_no_out, df_train_input, how = "inner", left_index=True, right_index=True)
         
-        x_train_no_out = train_no_out.drop("trip_duration", axis = 1)
-        y_train_no_out = train_no_out["trip_duration"]
+        x_train_no_out = train_no_out.copy()
 
         # Salva in numpy array
         x_train_no_out.to_csv('../data/x_train_no_out.csv', index = False)
-        y_train_no_out.to_csv('../data/y_train_no_out.csv', index = False)
         
     # Se i dati sono già presenti li carico
     x_train_no_out = pd.read_csv('../data/x_train_no_out.csv', sep = ",")
-    y_train_no_out = pd.read_csv('../data/y_train_no_out.csv', sep = ",")
-    return x_train_no_out, y_train_no_out
+
+    return x_train_no_out
 
 def fix_lat_long(df):
     df['x_pickup'] = np.cos(df['pickup_latitude']) * np.cos(df['pickup_longitude'])
@@ -123,7 +121,7 @@ def scale_data(df):
 
     ct = ColumnTransformer([
             ('somename', StandardScaler(), ['dis', 'x_pickup', 'y_pickup', 'z_pickup', 'x_dropoff', 'y_dropoff', 'z_dropoff']),
-            ('categorical', OneHotEncoder(), ['pickup_hour', 'pickup_weekday', 'County'])],
+            ('categorical', OneHotEncoder(), ['pickup_hour', 'pickup_weekday'])],
             remainder='passthrough')
 
     df = ct.fit_transform(df)
@@ -131,48 +129,34 @@ def scale_data(df):
     return df
 
 
-def compute_distance(df_train, df_validation, df_test):
+def compute_distance(df_train, df_test):
     # Crea la coppia di coordinate
     if not os.path.exists('../data/x_train_no_out_dist.csv'):
 
         # aggiungo dati ora e giorno settimana
         df_train = add_date_info(df_train)
-        df_validation = add_date_info(df_validation)
         df_test = add_date_info(df_test)
 
         df_train['coor_pickup'] = list(zip(df_train['pickup_latitude'], df_train['pickup_longitude']))
         df_train['coor_dropoff'] = list(zip(df_train['dropoff_latitude'], df_train['dropoff_longitude']))
 
-        df_validation['coor_pickup'] = list(zip(df_validation['pickup_latitude'], df_validation['pickup_longitude']))
-        df_validation['coor_dropoff'] = list(zip(df_validation['dropoff_latitude'], df_validation['dropoff_longitude']))
-
         df_test['coor_pickup'] = list(zip(df_test['pickup_latitude'], df_test['pickup_longitude']))
         df_test['coor_dropoff'] = list(zip(df_test['dropoff_latitude'], df_test['dropoff_longitude']))
 
         df_train['dis'] = df_train.apply(lambda row: get_distance_manhattan(row["pickup_longitude"],row["pickup_latitude"],row["dropoff_longitude"],row["dropoff_latitude"]), axis = 1)
-        df_validation['dis'] = df_validation.apply(lambda row: get_distance_manhattan(row["pickup_longitude"],row["pickup_latitude"],row["dropoff_longitude"],row["dropoff_latitude"]), axis = 1)
         df_test['dis'] = df_test.apply(lambda row: get_distance_manhattan(row["pickup_longitude"],row["pickup_latitude"],row["dropoff_longitude"],row["dropoff_latitude"]), axis = 1)
 
-        print('outliers in distance in df_train:', len(df_train[df_train['dis'] > 100]))
-        print('outliers in distance in df_validation:', len(df_validation[df_validation['dis'] > 100]))
-
-        df_train = df_train[df_train['dis'] < 100]
-        df_validation = df_validation[df_validation['dis'] < 100]
-
         df_train = df_train.drop(['coor_pickup', 'coor_dropoff'], axis = 1)
-        df_validation = df_validation.drop(['coor_pickup', 'coor_dropoff'], axis = 1)
         df_test = df_test.drop(['coor_pickup', 'coor_dropoff'], axis = 1)
         # Salvo il df
         df_train.to_csv('../data/x_train_no_out_dist.csv', index = False)
-        df_validation.to_csv('../data/x_validation_no_out_dist.csv', index = False)
         df_test.to_csv('../data/x_test_no_out_dist.csv', index = False)
         
     # Se i dati sono già presenti li carico
     df_train = pd.read_csv('../data/x_train_no_out_dist.csv', sep = ",") 
-    df_validation = pd.read_csv('../data/x_validation_no_out_dist.csv', sep = ",") 
     df_test = pd.read_csv('../data/x_test_no_out_dist.csv', sep = ",") 
 
-    return df_train, df_validation, df_test
+    return df_train, df_test
 
 
 def preprocessing_data():
@@ -189,66 +173,68 @@ def preprocessing_data():
 
     print("************* DELETE EXTREME OBSERVATIONS ************ \n")
     # La variabile di target ha un bel po' di outlier quindi leviamoli
-    x_train_no_out, y_train_no_out = delete_outliers(train)   
+    x_train_no_out = delete_outliers(train)   
 
     print("************** ADD COUNTY INFORMATION **************** \n")
-    x_train_no_out = add_county(x_train_no_out)
-    x_test = add_county(test)
-       
-    print("************* CREATE DUMMIES ************ \n")
-    x_train_no_out = pd.get_dummies(x_train_no_out, columns = ['passenger_count','store_and_fwd_flag'])
-    x_test = pd.get_dummies(x_test, columns = ['passenger_count','store_and_fwd_flag'])
+    if not os.path.exists('../data/x_train_no_out_dist.csv'):
+        x_train_no_out = add_county(x_train_no_out)
+        x_test = add_county(test)
+        print("************* CREATE DUMMIES ************ \n")
+        x_train_no_out = pd.get_dummies(x_train_no_out, columns = ['passenger_count','store_and_fwd_flag', "County"])
+        x_test = pd.get_dummies(x_test, columns = ['passenger_count','store_and_fwd_flag', "County"])
+        print("************* COMPUTE DISTANCE BETWEEN POINTS + DATE-HOUR ************ \n")  
+        x_train, x_test = compute_distance(x_train_no_out, x_test)
+    else:
+        x_train = pd.read_csv('../data/x_train_no_out_dist.csv')
+        x_test = pd.read_csv('../data/x_test_no_out_dist.csv')
 
-    print("************* SPLITTING DATA ************ \n")        
-    x_train, x_validation, y_train, y_validation = train_test_split(x_train_no_out, y_train_no_out, test_size=0.3, random_state=4242)
-    
-    print("************* PRODUCING PLOTS ************ \n")
-    # Levo le date per disegnare e levo anche la data di dropoff nel train perché non è presente nel test
-    #train_for_distribution = x_train.drop(['pickup_datetime', 'dropoff_datetime'],axis =1)
-    #validation_for_distribution = x_validation.drop(['pickup_datetime', 'dropoff_datetime'],axis =1)
-    #test_for_distribution = x_test.drop('pickup_datetime', axis =1)
-    
-    #histo_plot(train_for_distribution, validation_for_distribution, test_for_distribution)
-    #target_distribution(y_train['trip_duration'], y_validation['trip_duration'])
-   
-    print("************* COMPUTE DISTANCE BETWEEN POINTS + DATE-HOUR ************ \n")  
-    x_train, x_validation, x_test = compute_distance(x_train, x_validation, x_test)
-    y_train = y_train.merge(x_train, left_index=True, right_index=True).iloc[:,0]
-    y_validation = y_validation.merge(x_validation, left_index=True, right_index=True).iloc[:,0]
-
+    print('outliers in distance in df_train:', len(x_train[x_train['dis'] > 100]))
+    x_train = x_train[x_train['dis'] < 100]
 
     print("************* FIX LATITUDE AND LONGITUDE ************ \n")   
     x_train = fix_lat_long(x_train)
-    x_validation = fix_lat_long(x_validation)
     x_test = fix_lat_long(x_test)
     
     print("************* FIX THE CLASSES IN THE TEST SET ************ \n")
-    x_test.insert(loc=22, column='passenger_count_7', value=0)
-    x_test.insert(loc=23, column='passenger_count_8', value=0)
+    x_test.insert(loc=12, column='passenger_count_7', value=0)
+    x_test.insert(loc=13, column='passenger_count_8', value=0)
+    x_test.insert(loc=25, column='County_Suffolk', value=0)
+    
+
 
     print("************* DROP UNUSEFUL COLUMNS ************ \n")
 
     # Droppiamo momentaneamente le colonne che non so come trattare in modo da lavorarci. Poi le utilizzeremo meglio
     # Sarebbe interessante secondo me tenere solo l'ora del timestemp perché penso che sia la più indicativa 
-    
-    x_train = x_train.iloc[:,6:].drop(['pickup_date'], axis = 1)
-    x_validation = x_validation.iloc[:,6:].drop(['pickup_date'], axis = 1)
+    y_train = x_train.iloc[:,0]
+    x_train = x_train.iloc[:,7:].drop(['pickup_date'], axis = 1)
     x_test = x_test.iloc[:,5:].drop(['pickup_date'], axis = 1)
+    
+    print("************* SPLITTING DATA ************ \n")        
+    
+    x_train, x_validation, y_train, y_validation = train_test_split(x_train, y_train, test_size=0.3, random_state=4242)
 
     print("************* SCALE THE DATA ************ \n")
+    
     x_train_scaled = scale_data(x_train)
     x_validation_scaled = scale_data(x_validation)
     x_test_scaled = scale_data(x_test)
-    
-    # Ora scala la variabile di target
+
+    #Ora scala la variabile di target
     sc_y = StandardScaler()
+
+    print("pre reshape",y_train.shape, y_validation.shape)
+    y_train = y_train.to_numpy()
+    y_train = y_train.reshape(-1,1)
+
+    y_validation = y_validation.to_numpy()
+    y_validation = y_validation.reshape(-1,1)
+    print("after reshape",y_train.shape, y_validation.shape)
+    
     y_train_scaled = sc_y.fit_transform(y_train) 
     y_validation_scaled = sc_y.fit_transform(y_validation)
 
     # Salva lo scaler di y per poter tornare indietro
     joblib.dump(sc_y,  "scaler_y.pkl")
-
-    y_train_scaled = y_train_scaled.reshape(-1,1)
-    y_validation_scaled = y_validation_scaled.reshape(-1,1) 
-
+    
     return x_train_scaled, x_validation_scaled, x_test_scaled, y_train_scaled, y_validation, y_validation_scaled

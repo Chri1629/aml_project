@@ -147,12 +147,14 @@ def computation(args):
     y_validation_pred =  scaler_y.inverse_transform(y_validation_scaled_pred)
     scatter_plotter(y_validation, y_validation_pred, args.output)
     np.save(arr = y_validation_pred, file = args.output+'/y_val_pred.npy')
+    np.save(arr = y_validation_scaled_pred, file = args.output+'/y_validation_scaled_pred.npy')
     
 
     ################# COMPUTE THE PREDICTION ON THE TEST #############
     y_test_scaled_pred = model.predict(x_test_scaled)
     y_test_pred =  scaler_y.inverse_transform(y_test_scaled_pred)
-
+    np.save(arr = y_test_pred, file = args.output+'/y_test_pred.npy')
+    
 
     ################# SAVE THE WEIGHTS ###################À
     if not args.evaluate:    

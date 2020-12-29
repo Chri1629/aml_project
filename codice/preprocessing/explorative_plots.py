@@ -240,10 +240,87 @@ def maps_black(df):
     fig.savefig("../explorative_pics/map_bw.png", dpi =100, bbox_inches='tight')
     plt.close()
 
+
+def mse_classes(y_val, y_val_pred):
+    y_val = pd.DataFrame(y_val)
+    y_val_pred = pd.DataFrame(y_val_pred)
+    y_val['categoria'] = np.where(y_val[0] <= 100, '< 100',
+                                np.where((y_val[0] > 100) & (y_val[0] <= 200), '100 - 200', 
+                                        np.where((y_val[0] > 200) & (y_val[0] <= 500),  '200 - 500',
+                                                np.where((y_val[0] > 500) & (y_val[0] <= 1000), '500 - 1000', ' > 1000'))))
+    y_val.columns = ['duration', 'categoria']
+    totale = pd.concat([y_val, y_val_pred], axis = 1)
+    totale.columns = ['duration', 'categoria', 'predicted']
+    totale['mse'] = (totale['duration'] - totale['predicted'])**2
+    totale['mae'] = abs(totale['duration'] - totale['predicted'])
+    mse_df = pd.DataFrame(columns = ['category', 'mse', 'mae','rmse'])
+    for categoria in totale['categoria'].unique():
+        a = totale.loc[totale['categoria'] == categoria]
+        mse = a['mse'].mean()
+        mae = a['mae'].mean()
+        rmse = (a['mse'].mean())**(1/2)
+        mse_df = mse_df.append({'category': categoria,
+                            'mse': mse,
+                            'mae': mae,
+                            'rmse': rmse}, ignore_index=True)
+    mse_df['order'] = np.where(mse_df['category'] == '< 100', 1,
+                            np.where(mse_df['category'] == '100 - 200', 2,
+                                    np.where(mse_df['category'] == '200 - 500', 3,
+                                            np.where(mse_df['category'] == '500 - 1000', 4,5))))
+    mse_df = mse_df.sort_values('order')
+
+    mycolors = ['#264653', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51']
+
+    fig = plt.figure(figsize = (16,4))
+
+    plt.subplot(1,3,1)
+    plt.bar(mse_df['category'], mse_df['mse'], color = mycolors)
+    plt.title("MSE for category")
+    plt.xlabel("Category", size = 12)
+    plt.ylabel("MSE", size = 12)
+    plt.xticks(size = 10)
+    plt.yticks(size = 10)
+
+    plt.subplot(1,3,2)
+    plt.bar(mse_df['category'], mse_df['mae'], color = mycolors)
+    plt.title("MAE for category")
+    plt.xticks(size = 10)
+    plt.yticks(size = 10)
+    plt.xlabel("Category", size = 12)
+    plt.ylabel("MAE", size = 12)
+
+    plt.subplot(1,3,3)
+    plt.bar(mse_df['category'], mse_df['rmse'], color = mycolors)
+    plt.title("RMSE for category")
+    plt.xticks(size = 10)
+    plt.yticks(size = 10)
+    plt.xlabel("Category", size = 12)
+    plt.ylabel("RMSE", size = 12)
+
+    fig.tight_layout()
+    fig.savefig("../explorative_pics/mse_classes.png", dpi =100, bbox_inches='tight')
+    plt.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #train_df = pd.read_csv("../../data/x_train_no_out_dist.csv")
 #original_train_df =  pd.read_csv("../../data/train.csv")
 #y_train = pd.read_csv("../../data/y_train_no_out.csv")
 #y_validation = np.load("../../data/scaled/y_validation.npy")
+#y_val = np.load("../../data/scaled/y_validation.npy")
+#y_val_pred = np.load("../risultati_modelli/fede5/y_val_pred.npy")
 
 #target_distribution(y_train['trip_duration'], y_validation)
 #passenger_trips(original_train_df)
@@ -251,3 +328,4 @@ def maps_black(df):
 #maps_black(train_df)
 #pickup_dropoff(train_df)
 #weekday_trips(train_df)
+#mse_classes(y_val, y_val_pred)
