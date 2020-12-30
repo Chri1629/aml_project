@@ -107,28 +107,24 @@ def computation(args):
         early_stop = EarlyStopping(monitor='val_loss', min_delta=min_delta,
                                 patience=p_epochs, verbose=0)
 
+        
+
         #def reduceLR (epoch):
         #    return args.learning_rate * (1 / (1 + epoch*args.decay_rate))
 
-        def lr_scheduler_fede4_2(epoch, lr):
+        def lr_scheduler_fede(epoch, lr):
             if epoch <= 7:
                 lr = args.learning_rate
-            if epoch > 7:
+            if (epoch > 7) & (epoch <= 12):
                 lr = 0.001
-            if epoch > 12:
+            if (epoch > 12) & (epoch <= 20):
                 lr = 0.0007
             if epoch > 20:
                 lr = 0.0005
             return lr
 
-        def lr_scheduler_fede4_3(epoch, lr):
-            if epoch <= 15:
-                lr = args.learning_rate
-            if epoch > 15:
-                lr = 0.001
-            return lr
-
-        lr_sched = LearningRateScheduler(lr_scheduler_fede4_3, verbose=1)
+     
+        lr_sched = LearningRateScheduler(lr_scheduler_fede, verbose=1)
 
         csv_logger = CSVLogger(args.output +'/training.log')
 
@@ -138,18 +134,19 @@ def computation(args):
         # Cambiare inizializzazione dei pesi
         W_val = 0.5 * np.random.randn(x_train_scaled.shape[1]) + 1
 
-        history = model.fit(x_train_scaled, y_train_scaled,
-                            validation_data = (x_validation_scaled, y_validation_scaled),
-                            epochs=args.epoch, initial_epoch=args.initial_epoch,
-                            batch_size=args.batch_size, shuffle=True,
-                            callbacks=[early_stop, lr_sched, csv_logger])
+        #history = model.fit(x_train_scaled, y_train_scaled,
+        #                    validation_data = (x_validation_scaled, y_validation_scaled),
+        #                    epochs=args.epoch, initial_epoch=args.initial_epoch,
+        #                    batch_size=args.batch_size, shuffle=True,
+        #                    callbacks=[early_stop, lr_sched, csv_logger, auto_save])
         
 
     ################## COMPUTE THE CONFUSION MATRIX AND THE LOSS ON THE VALIDATION #######
-    loss_plotter(history, args.output)
+    #loss_plotter(history, args.output)
 
     scaler_y = joblib.load("scaler_y.pkl")
     # Importo lo scaler per usare al contrario le predizioni
+    model.load_weights(args.output+"/current_model")
     y_validation_scaled_pred = model.predict(x_validation_scaled)
     y_validation_pred =  scaler_y.inverse_transform(y_validation_scaled_pred)
     scatter_plotter(y_validation, y_validation_pred, args.output)

@@ -226,7 +226,7 @@ def maps(df):
 
 
 def maps_black(df):
-    fig = plt.subplots(figsize=(12,10))
+    fig = plt.figure(figsize=(12,10))
     s_marker = 5
     alpha_dot = 1
     plt.scatter( x= df["pickup_longitude"],
@@ -241,7 +241,7 @@ def maps_black(df):
     plt.close()
 
 
-def mse_classes(y_val, y_val_pred):
+def mse_classes(y_val, y_val_pred, modello):
     y_val = pd.DataFrame(y_val)
     y_val_pred = pd.DataFrame(y_val_pred)
     y_val['categoria'] = np.where(y_val[0] <= 100, '< 100',
@@ -253,16 +253,19 @@ def mse_classes(y_val, y_val_pred):
     totale.columns = ['duration', 'categoria', 'predicted']
     totale['mse'] = (totale['duration'] - totale['predicted'])**2
     totale['mae'] = abs(totale['duration'] - totale['predicted'])
-    mse_df = pd.DataFrame(columns = ['category', 'mse', 'mae','rmse'])
+    totale['perc'] = (abs(totale['duration'] - totale['predicted'])/totale['duration'])*100
+    mse_df = pd.DataFrame(columns = ['category', 'mse', 'mae','rmse','perc'])
     for categoria in totale['categoria'].unique():
         a = totale.loc[totale['categoria'] == categoria]
         mse = a['mse'].mean()
         mae = a['mae'].mean()
         rmse = (a['mse'].mean())**(1/2)
+        perc = a['perc'].mean()
         mse_df = mse_df.append({'category': categoria,
                             'mse': mse,
                             'mae': mae,
-                            'rmse': rmse}, ignore_index=True)
+                            'rmse': rmse,
+                            'perc': perc}, ignore_index=True)
     mse_df['order'] = np.where(mse_df['category'] == '< 100', 1,
                             np.where(mse_df['category'] == '100 - 200', 2,
                                     np.where(mse_df['category'] == '200 - 500', 3,
@@ -271,9 +274,9 @@ def mse_classes(y_val, y_val_pred):
 
     mycolors = ['#264653', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51']
 
-    fig = plt.figure(figsize = (16,4))
+    fig = plt.figure(figsize = (16,16))
 
-    plt.subplot(1,3,1)
+    plt.subplot(2,2,1)
     plt.bar(mse_df['category'], mse_df['mse'], color = mycolors)
     plt.title("MSE for category")
     plt.xlabel("Category", size = 12)
@@ -281,7 +284,7 @@ def mse_classes(y_val, y_val_pred):
     plt.xticks(size = 10)
     plt.yticks(size = 10)
 
-    plt.subplot(1,3,2)
+    plt.subplot(2,2,2)
     plt.bar(mse_df['category'], mse_df['mae'], color = mycolors)
     plt.title("MAE for category")
     plt.xticks(size = 10)
@@ -289,7 +292,7 @@ def mse_classes(y_val, y_val_pred):
     plt.xlabel("Category", size = 12)
     plt.ylabel("MAE", size = 12)
 
-    plt.subplot(1,3,3)
+    plt.subplot(2,2,3)
     plt.bar(mse_df['category'], mse_df['rmse'], color = mycolors)
     plt.title("RMSE for category")
     plt.xticks(size = 10)
@@ -297,8 +300,16 @@ def mse_classes(y_val, y_val_pred):
     plt.xlabel("Category", size = 12)
     plt.ylabel("RMSE", size = 12)
 
+    plt.subplot(2,2,4)
+    plt.bar(mse_df['category'], mse_df['perc'], color = mycolors)
+    plt.title("Perc for category")
+    plt.xticks(size = 10)
+    plt.yticks(size = 10)
+    plt.xlabel("Category", size = 12)
+    plt.ylabel("Perc", size = 12)
+
     fig.tight_layout()
-    fig.savefig("../explorative_pics/mse_classes.png", dpi =100, bbox_inches='tight')
+    fig.savefig("../risultati_modelli/{}/mse_classes.png".format(modello), dpi =100, bbox_inches='tight')
     plt.close()
 
 
@@ -319,8 +330,9 @@ def mse_classes(y_val, y_val_pred):
 #original_train_df =  pd.read_csv("../../data/train.csv")
 #y_train = pd.read_csv("../../data/y_train_no_out.csv")
 #y_validation = np.load("../../data/scaled/y_validation.npy")
+#modello = "fede5-2"
 #y_val = np.load("../../data/scaled/y_validation.npy")
-#y_val_pred = np.load("../risultati_modelli/fede5/y_val_pred.npy")
+#y_val_pred = np.load("../risultati_modelli/{}/y_val_pred.npy".format(modello))
 
 #target_distribution(y_train['trip_duration'], y_validation)
 #passenger_trips(original_train_df)
@@ -328,4 +340,4 @@ def mse_classes(y_val, y_val_pred):
 #maps_black(train_df)
 #pickup_dropoff(train_df)
 #weekday_trips(train_df)
-#mse_classes(y_val, y_val_pred)
+#mse_classes(y_val, y_val_pred, modello)
