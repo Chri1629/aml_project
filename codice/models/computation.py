@@ -134,11 +134,11 @@ def computation(args):
         # Cambiare inizializzazione dei pesi
         W_val = 0.5 * np.random.randn(x_train_scaled.shape[1]) + 1
 
-        #history = model.fit(x_train_scaled, y_train_scaled,
-        #                    validation_data = (x_validation_scaled, y_validation_scaled),
-        #                    epochs=args.epoch, initial_epoch=args.initial_epoch,
-        #                    batch_size=args.batch_size, shuffle=True,
-        #                    callbacks=[early_stop, lr_sched, csv_logger, auto_save])
+        history = model.fit(x_train_scaled, y_train_scaled,
+                            validation_data = (x_validation_scaled, y_validation_scaled),
+                            epochs=args.epoch, initial_epoch=args.initial_epoch,
+                            batch_size=args.batch_size, shuffle=True,
+                            callbacks=[early_stop, lr_sched, csv_logger, auto_save])
         
 
     ################## COMPUTE THE CONFUSION MATRIX AND THE LOSS ON THE VALIDATION #######
