@@ -142,7 +142,7 @@ def computation(args):
         
 
     ################## COMPUTE THE CONFUSION MATRIX AND THE LOSS ON THE VALIDATION #######
-    #loss_plotter(history, args.output)
+    loss_plotter(history, args.output)
 
     scaler_y = joblib.load("scaler_y.pkl")
     # Importo lo scaler per usare al contrario le predizioni
