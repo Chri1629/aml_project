@@ -1,5 +1,9 @@
 # Advancede Machine Learning project
 
+## Documentation
+
+You can find the documentation for all the functions used in this project [clicking here](codice/documentation/main.md) 
+
 ## Preparation
 
 We suggest to install all the useful libraries in a virtual environment in order to have the same version and to not create confilcts and warnings.
