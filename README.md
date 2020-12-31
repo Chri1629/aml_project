@@ -2,7 +2,7 @@
 
 ## Documentation
 
-You can find the documentation for all the functions used in this project [clicking here](codice/documentation/main.md) 
+You can find the documentation for all the functions used in this project [clicking here](codice/documentation/main.html) 
 
 ## Preparation
 
