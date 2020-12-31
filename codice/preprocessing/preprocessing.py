@@ -21,6 +21,11 @@ import geopandas.tools
 from shapely.geometry import Point
 
 def check_missing(df):
+    '''
+    Function to check missing values
+    @params:
+        df:        - Required   : The dataframe in which to check missing values
+    '''
     for colonna in df.columns:
         perc_missing = round(df[colonna].isnull().sum(axis = 0)/len(df[colonna])*100,0)
         if perc_missing == 0:
@@ -29,6 +34,11 @@ def check_missing(df):
             print("La percentuale di nulli in", colonna, "è: ", perc_missing, "%", "in", df)
 
 def delete_outliers(df_train):
+    '''
+    Function to delete outliers
+    @params:
+        df:        - Required   : The dataframe in which to delete outliers
+    '''
     # Visto che è un'operazione molto lunga salviamo i dati senza outlier, così da fare una sola volta e controllare. L'unica
     # colonna che contiene outlier sembra l'ultima, facciamolo solo su quella. Poi cambiamo il path per non farglielo fare
 
@@ -52,6 +62,11 @@ def delete_outliers(df_train):
     return x_train_no_out
 
 def fix_lat_long(df):
+    '''
+    Function to change latitude and longitude in x,y,z
+    @params:
+        df:        - Required   : The dataframe in which to compute x,y,z
+    '''
     df['x_pickup'] = np.cos(df['pickup_latitude']) * np.cos(df['pickup_longitude'])
     df['y_pickup'] = np.cos(df['pickup_latitude']) * np.sin(df['pickup_longitude'])
     df['z_pickup'] = np.sin(df['pickup_latitude'])
@@ -66,6 +81,11 @@ def fix_lat_long(df):
 
 
 def add_date_info(x_df):
+    '''
+    Function to extract date, hour and weekday information from datetime attribute
+    @params:
+        df:        - Required   : The dataframe in which to compute
+    '''
     # aggiunge informazioni alla data
     # date, hour, dayweek
     x_df['pickup_date'] = pd.to_datetime(x_df['pickup_datetime']).dt.date
@@ -75,6 +95,11 @@ def add_date_info(x_df):
     return x_df
 
 def add_county(df):
+    '''
+    Function to add county attribute
+    @params:
+        df:        - Required   : The dataframe in which to add the county attribute
+    '''
     df["pick_geometry"] = df.apply(lambda row: Point(row["pickup_longitude"], row["pickup_latitude"]), axis=1)
     df = geopandas.GeoDataFrame(df, geometry="pick_geometry")
 
@@ -91,21 +116,17 @@ def add_county(df):
 
     return df_out
 
-def distance_from(loc1,loc2): 
-    # Calcola la distanza su due punti della mappa
-    dist=hs.haversine(loc1,loc2)
-    return round(dist,2)
-
-
-def distance_from2(pickup_long, pickup_lat, dropoff_long, dropoff_lat):
-    with urllib.request.urlopen("http://localhost:5000/route/v1/driving/{},{};{},{}?overview=false".format(pickup_long, pickup_lat, dropoff_long, dropoff_lat)) as url: 
-        data = json.loads(url.read().decode())
-        distance = data["routes"][0]["legs"][0]["distance"]
-    return distance
-
 
 def get_distance(lng1_r=None, lat1_r=None, 
                             lng2_r=None, lat2_r=None  ):
+        '''
+        Function used to calculate the manhattan distance between the pickup and dropoff locations
+        @params:
+            lng1_r:        - Required   : Longitude 1
+            lat1_r:        - Required   : Latitude 1
+            lng2_r:        - Required   : Longitude 2
+            lat2_r:        - Required   : Latitude 2
+        ''' 
         lat = lat2_r - lat1_r
         lng = lng2_r - lng1_r
         d = np.sin(lat * 0.5) ** 2 + np.cos(lat1_r) * np.cos(lat2_r) * np.sin(lng * 0.5) ** 2
@@ -114,6 +135,14 @@ def get_distance(lng1_r=None, lat1_r=None,
 
 
 def get_distance_manhattan(lat1, lng1, lat2, lng2):
+    '''
+    Function to calculate the manhattan distance between the pickup and dropoff locations
+    @params:
+            lng1_r:        - Required   : Longitude 1
+            lat1_r:        - Required   : Latitude 1
+            lng2_r:        - Required   : Longitude 2
+            lat2_r:        - Required   : Latitude 2
+    ''' 
     lat1_r, lng1_r, lat2_r, lng2_r = map( np.radians, (lat1, lng1, lat2, lng2))
     a = get_distance(lng1_r, lat1_r, lng2_r, lat1_r )
     b = get_distance(lng1_r, lat1_r, lng1_r, lat2_r )
@@ -121,7 +150,11 @@ def get_distance_manhattan(lat1, lng1, lat2, lng2):
     
 
 def scale_data(df):
-
+    '''
+    Function to scale data using standardscaler and onehotencoder
+    @params:
+        df:        - Required   : The dataframe that contains the attribute to scale
+    '''
     ct = ColumnTransformer([
             ('somename', StandardScaler(), ['dis', 'x_pickup', 'y_pickup', 'z_pickup', 'x_dropoff', 'y_dropoff', 'z_dropoff']),
             ('categorical', OneHotEncoder(), ['pickup_hour', 'pickup_weekday'])],
@@ -133,6 +166,12 @@ def scale_data(df):
 
 
 def compute_distance(df_train, df_test):
+    '''
+    Function that effectively calculates the manhattan distance between the pickup and dropoff locations
+    @params:
+        df_train:        - Required   : The train dataframe
+        df_test:        - Required   : The test dataframe
+    '''
     # Crea la coppia di coordinate
     if not os.path.exists('../data/x_train_no_out_dist.csv'):
 
@@ -163,6 +202,9 @@ def compute_distance(df_train, df_test):
 
 
 def preprocessing_data():
+    '''
+    Function that combines all the previous functions and completely preprocess the data
+    '''
     train, test = open_data()
     print("************* TRAIN DATA ***************\n", train.head())
 
@@ -203,8 +245,6 @@ def preprocessing_data():
     x_test.insert(loc=13, column='passenger_count_8', value=0)
     x_test.insert(loc=25, column='County_Suffolk', value=0)
     
-
-
     print("************* DROP UNUSEFUL COLUMNS ************ \n")
 
     # Droppiamo momentaneamente le colonne che non so come trattare in modo da lavorarci. Poi le utilizzeremo meglio
