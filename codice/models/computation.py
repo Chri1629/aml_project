@@ -1,3 +1,7 @@
+'''
+Excecute the computation function of the whole project
+'''
+
 import argparse
 import pandas as pd
 from preprocessing.preprocessing import preprocessing_data
@@ -46,7 +50,12 @@ pd.options.mode.chained_assignment = None
 
 
 def computation(args):
-
+    '''
+    Function that execute in sequence the all operations of the project, saving partial and final results.
+    The steps are: preprocessing, explorative plots, modeling and results
+    Parameters:
+        args    - Required  : command line args 
+    '''
     if tf.test.gpu_device_name(): 
         print('Using default GPU device:{}'.format(tf.test.gpu_device_name())) 
     else: 

@@ -17,11 +17,6 @@ import matplotlib.pyplot as plt
 #>>>>>>>>>>>> FUNCTIONS USED IN THE PROGRAMME <<<<<<<<<<<<<<<<<<
 
 #	Initialization of the parser arguments
-parser = argparse.ArgumentParser()
-
-parser.add_argument('-c', '--comparison', type=str, required=False, default = "../risultati_modelli", help="Inserire la directory in cui salvare i plot di learning rate")
-
-args = parser.parse_args()
 
 
 def val_comparison(d1,d2,d3):
@@ -32,6 +27,7 @@ def val_comparison(d1,d2,d3):
         d2:   - Required   : Second neural network
         d3:   - Required   : Second neural network
     '''
+
     fig = plt.figure(figsize=(20,10)) 
     fig.add_subplot(121)
     plt.plot(d1["loss"], label= "Model 1", color = "skyblue")
@@ -59,10 +55,16 @@ def val_comparison(d1,d2,d3):
  
 #>>>>>>>>>>>> CORE OF THE PROGRAMME <<<<<<<<<<<<<<<<<<
 
-#   Opening of loss function used with different learning rate
-mod_1 = pd.read_csv(args.comparison+"/fede4-3/training.log")
-mod_2 = pd.read_csv(args.comparison+"/fede5-2/training.log")
-mod_3 = pd.read_csv(args.comparison+"/fede5-3/training.log")
 
-#   Some useful plots
-val_comparison(mod_1,mod_2,mod_3)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--comparison', type=str, required=False, default = "../risultati_modelli", help="Inserire la directory in cui salvare i plot di learning rate")
+    args = parser.parse_args()
+
+    #   Opening of loss function used with different learning rate
+    mod_1 = pd.read_csv(args.comparison+"/fede4-3/training.log")
+    mod_2 = pd.read_csv(args.comparison+"/fede5-2/training.log")
+    mod_3 = pd.read_csv(args.comparison+"/fede5-3/training.log")
+
+    #   Some useful plots
+    val_comparison(mod_1,mod_2,mod_3)

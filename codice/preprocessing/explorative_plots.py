@@ -1,5 +1,5 @@
 '''
-File che definisce i plot esplorativi
+Scipt that defines exploratives plots
 '''
 
 import matplotlib.pyplot as plt
