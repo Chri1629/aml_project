@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module preprocessing.preprocessing</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="preprocessing.html"><font color="#ffffff">preprocessing</font></a>.preprocessing</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cusers%5Cfede9%5Cdocuments%5Cgithub%5Caml_project%5Ccodice%5Cpreprocessing%5Cpreprocessing.py">c:\users\fede9\documents\github\aml_project\codice\preprocessing\preprocessing.py</a></font></td></tr></table>
+    <p><tt>Program&nbsp;that&nbsp;preprocess&nbsp;data&nbsp;before&nbsp;computation</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="sklearn.utils.class_weight.html">sklearn.utils.class_weight</a><br>
+<a href="geopandas.html">geopandas</a><br>
+<a href="haversine.html">haversine</a><br>
+</td><td width="25%" valign=top><a href="joblib.html">joblib</a><br>
+<a href="json.html">json</a><br>
+<a href="numpy.html">numpy</a><br>
+</td><td width="25%" valign=top><a href="os.html">os</a><br>
+<a href="pandas.html">pandas</a><br>
+<a href="scipy.stats.html">scipy.stats</a><br>
+</td><td width="25%" valign=top><a href="urllib.html">urllib</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-add_county"><strong>add_county</strong></a>(df)</dt><dd><tt>Function&nbsp;to&nbsp;add&nbsp;county&nbsp;attribute<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;df:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Required&nbsp;&nbsp;&nbsp;:&nbsp;The&nbsp;dataframe&nbsp;in&nbsp;which&nbsp;to&nbsp;add&nbsp;the&nbsp;county&nbsp;attribute</tt></dd></dl>
+ <dl><dt><a name="-add_date_info"><strong>add_date_info</strong></a>(x_df)</dt><dd><tt>Function&nbsp;to&nbsp;extract&nbsp;date,&nbsp;hour&nbsp;and&nbsp;weekday&nbsp;information&nbsp;from&nbsp;datetime&nbsp;attribute<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;df:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Required&nbsp;&nbsp;&nbsp;:&nbsp;The&nbsp;dataframe&nbsp;in&nbsp;which&nbsp;to&nbsp;compute</tt></dd></dl>
+ <dl><dt><a name="-check_missing"><strong>check_missing</strong></a>(df)</dt><dd><tt>Function&nbsp;to&nbsp;check&nbsp;missing&nbsp;values<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;df:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Required&nbsp;&nbsp;&nbsp;:&nbsp;The&nbsp;dataframe&nbsp;in&nbsp;which&nbsp;to&nbsp;check&nbsp;missing&nbsp;values</tt></dd></dl>
+ <dl><dt><a name="-compute_distance"><strong>compute_distance</strong></a>(df_train, df_test)</dt><dd><tt>Function&nbsp;that&nbsp;effectively&nbsp;calculates&nbsp;the&nbsp;manhattan&nbsp;distance&nbsp;between&nbsp;the&nbsp;pickup&nbsp;and&nbsp;dropoff&nbsp;locations<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;df_train:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Required&nbsp;&nbsp;&nbsp;:&nbsp;The&nbsp;train&nbsp;dataframe<br>
+&nbsp;&nbsp;&nbsp;&nbsp;df_test:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Required&nbsp;&nbsp;&nbsp;:&nbsp;The&nbsp;test&nbsp;dataframe</tt></dd></dl>
+ <dl><dt><a name="-delete_outliers"><strong>delete_outliers</strong></a>(df_train)</dt><dd><tt>Function&nbsp;to&nbsp;delete&nbsp;outliers<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;df:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Required&nbsp;&nbsp;&nbsp;:&nbsp;The&nbsp;dataframe&nbsp;in&nbsp;which&nbsp;to&nbsp;delete&nbsp;outliers</tt></dd></dl>
+ <dl><dt><a name="-fix_lat_long"><strong>fix_lat_long</strong></a>(df)</dt><dd><tt>Function&nbsp;to&nbsp;change&nbsp;latitude&nbsp;and&nbsp;longitude&nbsp;in&nbsp;x,y,z<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;df:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Required&nbsp;&nbsp;&nbsp;:&nbsp;The&nbsp;dataframe&nbsp;in&nbsp;which&nbsp;to&nbsp;compute&nbsp;x,y,z</tt></dd></dl>
+ <dl><dt><a name="-get_distance"><strong>get_distance</strong></a>(lng1_r=None, lat1_r=None, lng2_r=None, lat2_r=None)</dt><dd><tt>Function&nbsp;used&nbsp;to&nbsp;calculate&nbsp;the&nbsp;manhattan&nbsp;distance&nbsp;between&nbsp;the&nbsp;pickup&nbsp;and&nbsp;dropoff&nbsp;locations<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lng1_r:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Required&nbsp;&nbsp;&nbsp;:&nbsp;Longitude&nbsp;1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lat1_r:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Required&nbsp;&nbsp;&nbsp;:&nbsp;Latitude&nbsp;1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lng2_r:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Required&nbsp;&nbsp;&nbsp;:&nbsp;Longitude&nbsp;2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lat2_r:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Required&nbsp;&nbsp;&nbsp;:&nbsp;Latitude&nbsp;2</tt></dd></dl>
+ <dl><dt><a name="-get_distance_manhattan"><strong>get_distance_manhattan</strong></a>(lat1, lng1, lat2, lng2)</dt><dd><tt>Function&nbsp;to&nbsp;calculate&nbsp;the&nbsp;manhattan&nbsp;distance&nbsp;between&nbsp;the&nbsp;pickup&nbsp;and&nbsp;dropoff&nbsp;locations<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lng1_r:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Required&nbsp;&nbsp;&nbsp;:&nbsp;Longitude&nbsp;1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lat1_r:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Required&nbsp;&nbsp;&nbsp;:&nbsp;Latitude&nbsp;1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lng2_r:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Required&nbsp;&nbsp;&nbsp;:&nbsp;Longitude&nbsp;2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lat2_r:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Required&nbsp;&nbsp;&nbsp;:&nbsp;Latitude&nbsp;2</tt></dd></dl>
+ <dl><dt><a name="-preprocessing_data"><strong>preprocessing_data</strong></a>()</dt><dd><tt>Function&nbsp;that&nbsp;combines&nbsp;all&nbsp;the&nbsp;previous&nbsp;functions&nbsp;and&nbsp;completely&nbsp;preprocess&nbsp;the&nbsp;data</tt></dd></dl>
+ <dl><dt><a name="-scale_data"><strong>scale_data</strong></a>(df)</dt><dd><tt>Function&nbsp;to&nbsp;scale&nbsp;data&nbsp;using&nbsp;standardscaler&nbsp;and&nbsp;onehotencoder<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;df:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Required&nbsp;&nbsp;&nbsp;:&nbsp;The&nbsp;dataframe&nbsp;that&nbsp;contains&nbsp;the&nbsp;attribute&nbsp;to&nbsp;scale</tt></dd></dl>
+</td></tr></table>
+</body></html>
