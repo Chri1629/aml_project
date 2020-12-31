@@ -6,7 +6,6 @@ Christian Uccheddu
 '''
 
 
-
 #	Import of useful libraries
 
 import numpy as np
@@ -49,15 +48,12 @@ def val_comparison(d1,d2,d3):
     plt.xlabel("Epoch", size = 15)
     plt.ylabel("Training Loss", size = 15)
     plt.title("\n Training Loss \n", size = 15)
-    
     plt.show()	
-#    fig.savefig('val_loss_activation_comparison.png', bbox_inches='tight', dpi = 100)
     fig.savefig('loss_comparison.png', bbox_inches='tight', dpi = 100)
  
 #>>>>>>>>>>>> CORE OF THE PROGRAMME <<<<<<<<<<<<<<<<<<
 
 #   Opening of loss function used with different learning rate
-
 mod_1 = pd.read_csv(args.comparison+"/fede4-3/training.log")
 mod_2 = pd.read_csv(args.comparison+"/fede5-2/training.log")
 mod_3 = pd.read_csv(args.comparison+"/fede5-3/training.log")

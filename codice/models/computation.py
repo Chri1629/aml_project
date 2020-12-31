@@ -107,10 +107,6 @@ def computation(args):
         early_stop = EarlyStopping(monitor='val_loss', min_delta=min_delta,
                                 patience=p_epochs, verbose=0)
 
-        
-
-        #def reduceLR (epoch):
-        #    return args.learning_rate * (1 / (1 + epoch*args.decay_rate))
 
         def lr_scheduler_fede(epoch, lr):
             if epoch <= 7:
@@ -134,6 +130,7 @@ def computation(args):
         # Cambiare inizializzazione dei pesi
         W_val = 0.5 * np.random.randn(x_train_scaled.shape[1]) + 1
 
+        # Fitting
         history = model.fit(x_train_scaled, y_train_scaled,
                             validation_data = (x_validation_scaled, y_validation_scaled),
                             epochs=args.epoch, initial_epoch=args.initial_epoch,

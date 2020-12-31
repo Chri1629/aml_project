@@ -117,7 +117,10 @@ def histo_plot(df1, df2, df3):
 
 
 def weekday_trips(df):
-    nomalize=1000 # tirps
+    '''
+    Visualizzazione della quantità di trips divise per giorno della settimana
+    '''
+    nomalize=1000 
     fig, ax = plt.subplots(ncols=1, sharey=False)
     fig.set_size_inches(20,6)
     ax.plot(df.groupby('pickup_weekday').count()['vendor_id']/nomalize,  'r-*',  markersize=15,  label='Pickup')
@@ -129,7 +132,8 @@ def weekday_trips(df):
 
 
 def make_hist( X, xmax=None, xmin=None, binw=1, xlabel='Input', ylabel='Counts', 
-              xunit='', edgecolor='black', tightLabel=False, centerLabel=False, debug=False, log=False, **hist_kwds ):    
+              xunit='', edgecolor='black', tightLabel=False, centerLabel=False, debug=False, log=False, **hist_kwds ): 
+       
     if not xmax:
         xmax = max(X)+binw
     if not xmin:
@@ -195,6 +199,9 @@ def passenger_trips(df):
     plt.close()
 
 def maps(df):
+    '''
+    Mappa delle location di pickup a NYC, divise per contea di appartenenza
+    '''
     fig = plt.figure(figsize=(12,10))
     s_marker = 5
     alpha_dot = 1
@@ -226,6 +233,9 @@ def maps(df):
 
 
 def maps_black(df):
+    '''
+    Mappa delle location di pickup a NYC
+    '''
     fig = plt.figure(figsize=(12,10))
     s_marker = 5
     alpha_dot = 1
@@ -242,6 +252,9 @@ def maps_black(df):
 
 
 def mse_classes(y_val, y_val_pred, modello):
+    '''
+    Mostra mse, mae, rmse e errore perc. per ciascuna classe 
+    '''
     y_val = pd.DataFrame(y_val)
     y_val_pred = pd.DataFrame(y_val_pred)
     y_val['categoria'] = np.where(y_val[0] <= 100, '< 100',
@@ -271,68 +284,52 @@ def mse_classes(y_val, y_val_pred, modello):
                                     np.where(mse_df['category'] == '200 - 500', 3,
                                             np.where(mse_df['category'] == '500 - 1000', 4,5))))
     mse_df = mse_df.sort_values('order')
-
     mycolors = ['#264653', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51']
-
     fig = plt.figure(figsize = (16,16))
-
     plt.subplot(2,2,1)
     plt.bar(mse_df['category'], mse_df['mse'], color = mycolors)
-    plt.title("MSE for category")
-    plt.xlabel("Category", size = 12)
-    plt.ylabel("MSE", size = 12)
-    plt.xticks(size = 10)
-    plt.yticks(size = 10)
-
+    plt.title("\n MSE for category \n", size=24)
+    plt.xlabel("Category", size = 18)
+    plt.ylabel("MSE", size = 18)
+    plt.xticks(size = 15)
+    plt.yticks(size = 15)
     plt.subplot(2,2,2)
     plt.bar(mse_df['category'], mse_df['mae'], color = mycolors)
-    plt.title("MAE for category")
-    plt.xticks(size = 10)
-    plt.yticks(size = 10)
-    plt.xlabel("Category", size = 12)
-    plt.ylabel("MAE", size = 12)
-
+    plt.title("\n MAE for category \n", size=24)
+    plt.xticks(size = 15)
+    plt.yticks(size = 15)
+    plt.xlabel("Category", size = 18)
+    plt.ylabel("MAE", size = 18)
     plt.subplot(2,2,3)
     plt.bar(mse_df['category'], mse_df['rmse'], color = mycolors)
-    plt.title("RMSE for category")
-    plt.xticks(size = 10)
-    plt.yticks(size = 10)
-    plt.xlabel("Category", size = 12)
-    plt.ylabel("RMSE", size = 12)
-
+    plt.title("\n RMSE for category \n", size=24)
+    plt.xticks(size = 15)
+    plt.yticks(size = 15)
+    plt.xlabel("Category", size = 18)
+    plt.ylabel("RMSE", size = 18)
     plt.subplot(2,2,4)
     plt.bar(mse_df['category'], mse_df['perc'], color = mycolors)
-    plt.title("Perc for category")
-    plt.xticks(size = 10)
-    plt.yticks(size = 10)
-    plt.xlabel("Category", size = 12)
-    plt.ylabel("Perc", size = 12)
-
+    plt.title("\n Perc for category \n", size=24)
+    plt.xticks(size = 15)
+    plt.yticks(size = 15)
+    plt.xlabel("Category", size = 18)
+    plt.ylabel("Perc", size = 18)
     fig.tight_layout()
     fig.savefig("../risultati_modelli/{}/mse_classes.png".format(modello), dpi =100, bbox_inches='tight')
     plt.close()
 
 
+# READING FILES
 
-
-
-
-
-
-
-
-
-
-
-
-
+#modello = "fede5-2"
 #train_df = pd.read_csv("../../data/x_train_no_out_dist.csv")
 #original_train_df =  pd.read_csv("../../data/train.csv")
 #y_train = pd.read_csv("../../data/y_train_no_out.csv")
 #y_validation = np.load("../../data/scaled/y_validation.npy")
-#modello = "fede5-2"
 #y_val = np.load("../../data/scaled/y_validation.npy")
 #y_val_pred = np.load("../risultati_modelli/{}/y_val_pred.npy".format(modello))
+
+# PLOTTING
 
 #target_distribution(y_train['trip_duration'], y_validation)
 #passenger_trips(original_train_df)

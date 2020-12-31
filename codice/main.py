@@ -6,10 +6,10 @@ import argparse
 import pandas as pd
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-e', '--epoch', type=int, required=False, default=5, help ="Give the number of epochs, default = 10")
+parser.add_argument('-e', '--epoch', type=int, required=False, default=5, help ="Give the number of epochs, default = 5")
 parser.add_argument('-ie', '--initial_epoch', type=int, required=False, default=0, help ="Give the initial epoch, default = 0")
 parser.add_argument('-bs', '--batch-size', type=int, required=False, default=128, help ="Give the batch size, default = 128")
-parser.add_argument('-lr', '--learning-rate', type=float, required=False, default=5e-3, help ="Give the learning rate, default = 1e-3") 
+parser.add_argument('-lr', '--learning-rate', type=float, required=False, default=5e-3, help ="Give the learning rate, default = 5e-3") 
 parser.add_argument('-d', '--data', type=str, required=False, default="data", help = "Give the directory of the data")
 parser.add_argument('-p', '--patience', type=str, required=False, default="0.01:50",
                     help="Patience format:  delta_val:epochs")
