@@ -11,12 +11,11 @@ import seaborn
 pd.options.mode.chained_assignment = None
 
 def target_distribution(df_train, df_validation):
-
     '''
-    Istogramma per disegnare le distribuzioni delle variabili
-    @params:
-        df_train:        - Required   : Variabile di target del train
-        df_validation:   - Required   : Variabile di target del train
+    Histogram to visualize variables distributions 
+    Parameters:
+        df_train:        - Required   :  train target variable
+        df_validation:   - Required   :  val target variable
     '''
     fig = plt.figure(figsize = (15,8))
     plt.hist(df_train, bins = 300, color = "skyblue", alpha = 0.7, label = "Train")
@@ -34,9 +33,10 @@ def target_distribution(df_train, df_validation):
  
 def loss_plotter(history, output_path):
     '''
-    Istogramma per disegnare le distribuzioni delle variabili
-    @params:
-        history:    - Required   : History del fit del modello di cui disegnare accuracy e loss
+    Plots the loss of the model 
+    Parameters:
+        history:    - Required   : History of the model fit
+        output_path  - Required   : Path in which to save the image
     '''
     fig = plt.figure(figsize=(10,5))
     plt.plot(history.history['loss'], label = "Train loss")
@@ -54,10 +54,11 @@ def loss_plotter(history, output_path):
 
 def scatter_plotter(y, pred, output_path):
     '''
-    Istogramma per disegnare le distribuzioni delle variabili
-    @params:
-        y:    - Required   : History del fit del modello di cui disegnare accuracy e loss
-        pred:    - Required   : History del fit del modello di cui disegnare accuracy e loss
+    Scatter plot of true vs predicted trip duration
+    Parameters:
+        y:    - Required   : True trip duration
+        pred:    - Required   : Predicted trip duration
+        output_path  - Required   : Path in which to save the image
     '''
     fig = plt.figure(figsize=(15,8))
     plt.plot(y,pred, 'o',markersize=1, label = "Predicted")
@@ -80,7 +81,7 @@ def scatter_plotter(y, pred, output_path):
 def histo_plot(df1, df2, df3):
     '''
     Istogramma per disegnare le distribuzioni delle variabili
-    @params:
+    Parameters:
         df_1:   - Required   : Dataframe di train di cui disegnare la distribuzione
         df_2:   - Required   : Dataframe di validation di cui disegnare la distribuzione
         df_3:   - Required   : Dataframe di test di cui disegnare la distribuzione
@@ -200,7 +201,9 @@ def passenger_trips(df):
 
 def maps(df):
     '''
-    Mappa delle location di pickup a NYC, divise per contea di appartenenza
+    Plots the map of the pickup locations in NYC, divided by County
+    Parameters:
+        df:    - Required   : Dataframe from which to print the map
     '''
     fig = plt.figure(figsize=(12,10))
     s_marker = 5
@@ -234,7 +237,9 @@ def maps(df):
 
 def maps_black(df):
     '''
-    Mappa delle location di pickup a NYC
+    Plots the map of the pickup locations in NYC
+    Parameters:
+        df:    - Required   : Dataframe from which to print the map
     '''
     fig = plt.figure(figsize=(12,10))
     s_marker = 5
@@ -253,7 +258,11 @@ def maps_black(df):
 
 def mse_classes(y_val, y_val_pred, modello):
     '''
-    Mostra mse, mae, rmse e errore perc. per ciascuna classe 
+    Views mse, mae, rmse and perc divided by trip duration bins
+    Parameters:
+        y_val:    - Required   : file that contains the true trip duration
+        pred:    - Required   : file that contains the predicted trip duration
+        output_path  - Required   : neural network model
     '''
     y_val = pd.DataFrame(y_val)
     y_val_pred = pd.DataFrame(y_val_pred)

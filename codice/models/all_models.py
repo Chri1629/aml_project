@@ -15,7 +15,7 @@ from tensorflow.keras.applications import resnet50, vgg19, mobilenet_v2, xceptio
 def getModel(id, input_dim):
     '''
     Function to load the requested model
-    @params:
+    Parameters:
         id:        - Required   : The id of the requested model
         input_dim:   - Required   : The input dimensions for the model
     '''

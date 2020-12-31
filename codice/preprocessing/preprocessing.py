@@ -23,7 +23,7 @@ from shapely.geometry import Point
 def check_missing(df):
     '''
     Function to check missing values
-    @params:
+    Parameters:
         df:        - Required   : The dataframe in which to check missing values
     '''
     for colonna in df.columns:
@@ -36,7 +36,7 @@ def check_missing(df):
 def delete_outliers(df_train):
     '''
     Function to delete outliers
-    @params:
+    Parameters:
         df:        - Required   : The dataframe in which to delete outliers
     '''
     # Visto che è un'operazione molto lunga salviamo i dati senza outlier, così da fare una sola volta e controllare. L'unica
@@ -64,7 +64,7 @@ def delete_outliers(df_train):
 def fix_lat_long(df):
     '''
     Function to change latitude and longitude in x,y,z
-    @params:
+    Parameters:
         df:        - Required   : The dataframe in which to compute x,y,z
     '''
     df['x_pickup'] = np.cos(df['pickup_latitude']) * np.cos(df['pickup_longitude'])
@@ -83,7 +83,7 @@ def fix_lat_long(df):
 def add_date_info(x_df):
     '''
     Function to extract date, hour and weekday information from datetime attribute
-    @params:
+    Parameters:
         df:        - Required   : The dataframe in which to compute
     '''
     # aggiunge informazioni alla data
@@ -97,7 +97,7 @@ def add_date_info(x_df):
 def add_county(df):
     '''
     Function to add county attribute
-    @params:
+    Parameters:
         df:        - Required   : The dataframe in which to add the county attribute
     '''
     df["pick_geometry"] = df.apply(lambda row: Point(row["pickup_longitude"], row["pickup_latitude"]), axis=1)
@@ -121,7 +121,7 @@ def get_distance(lng1_r=None, lat1_r=None,
                             lng2_r=None, lat2_r=None  ):
         '''
         Function used to calculate the manhattan distance between the pickup and dropoff locations
-        @params:
+        Parameters:
             lng1_r:        - Required   : Longitude 1
             lat1_r:        - Required   : Latitude 1
             lng2_r:        - Required   : Longitude 2
@@ -137,7 +137,7 @@ def get_distance(lng1_r=None, lat1_r=None,
 def get_distance_manhattan(lat1, lng1, lat2, lng2):
     '''
     Function to calculate the manhattan distance between the pickup and dropoff locations
-    @params:
+    Parameters:
             lng1_r:        - Required   : Longitude 1
             lat1_r:        - Required   : Latitude 1
             lng2_r:        - Required   : Longitude 2
@@ -152,7 +152,7 @@ def get_distance_manhattan(lat1, lng1, lat2, lng2):
 def scale_data(df):
     '''
     Function to scale data using standardscaler and onehotencoder
-    @params:
+    Parameters:
         df:        - Required   : The dataframe that contains the attribute to scale
     '''
     ct = ColumnTransformer([
@@ -168,7 +168,7 @@ def scale_data(df):
 def compute_distance(df_train, df_test):
     '''
     Function that effectively calculates the manhattan distance between the pickup and dropoff locations
-    @params:
+    Parameters:
         df_train:        - Required   : The train dataframe
         df_test:        - Required   : The test dataframe
     '''

@@ -27,7 +27,7 @@ args = parser.parse_args()
 def val_comparison(d1,d2,d3):
     '''
     Graphs that compares the losses of three different models
-    @params:
+    Parameters:
         d1:   - Required   : First neural network
         d2:   - Required   : Second neural network
         d3:   - Required   : Second neural network
