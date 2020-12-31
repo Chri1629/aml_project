@@ -1,3 +1,7 @@
+'''
+Programm to import the requested neural network for computation
+'''
+
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.activations import relu
 from tensorflow.keras.layers import Dense, LeakyReLU, Dropout,AlphaDropout, Conv1D, Flatten, BatchNormalization, Input, GaussianNoise, ReLU
@@ -9,12 +13,18 @@ from tensorflow.keras.applications import resnet50, vgg19, mobilenet_v2, xceptio
 
 
 def getModel(id, input_dim):
+    '''
+    Function to load the requested model
+    @params:
+        id:        - Required   : The id of the requested model
+        input_dim:   - Required   : The input dimensions for the model
+    '''
 
     print(">>> Creating model...")
     model = Sequential()
 # <<<<<<<<<<<<<<<<<<<<<<<<<     RETI     <<<<<<<<<<<<<<<<<<<<<<<<<            
 
-    if id=="fede4-3": 
+    if id=="model1": 
         model.add(Input(shape=input_dim))
         model.add(GaussianNoise(0.005))
         model.add(Dense(512, activation='relu'))
@@ -38,7 +48,7 @@ def getModel(id, input_dim):
         print(model.summary())
 
 
-    elif id=="fede5-2": 
+    elif id=="model2": 
         model.add(Input(shape=input_dim))
         model.add(GaussianNoise(0.005))
         model.add(Dense(512, activation='relu'))
@@ -65,7 +75,7 @@ def getModel(id, input_dim):
     
         print(model.summary())
 
-    elif id=="fede5-3": 
+    elif id=="model3": 
         model.add(Input(shape=input_dim))
         model.add(GaussianNoise(0.005))
         model.add(Dense(512, activation='relu'))

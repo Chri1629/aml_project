@@ -1,8 +1,7 @@
 '''
-Programm to compare the loss function for the same network for different activation function 
+Program to compare the loss function for different networks 
 			Command line in order to compile from shell:
  			python loss_comparison.py -a "risultati_modello"
-Christian Uccheddu
 '''
 
 
@@ -26,6 +25,13 @@ args = parser.parse_args()
 
 
 def val_comparison(d1,d2,d3):
+    '''
+    Graphs that compares the losses of three different models
+    @params:
+        d1:   - Required   : First neural network
+        d2:   - Required   : Second neural network
+        d3:   - Required   : Second neural network
+    '''
     fig = plt.figure(figsize=(20,10)) 
     fig.add_subplot(121)
     plt.plot(d1["loss"], label= "Model 1", color = "skyblue")
