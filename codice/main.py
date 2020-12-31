@@ -15,7 +15,7 @@ Main module to execute all the steps of the project with the following command l
 '''
 from preprocessing.preprocessing import preprocessing_data
 
-from models import computation
+from models.computation import computation
 import time
 import argparse
 import pandas as pd
