@@ -1,5 +1,8 @@
-from .open import open_data
+'''
+Program that preprocess data before computation
+'''
 
+from .open import open_data
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder
 from sklearn.utils import class_weight

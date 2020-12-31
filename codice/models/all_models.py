@@ -1,5 +1,5 @@
 '''
-Programm to import the requested neural network for computation
+Program to import the requested neural network for computation
 '''
 
 from tensorflow.keras.models import Sequential, load_model
