@@ -275,7 +275,7 @@ def mse_classes(y_val, y_val_pred, modello):
     totale.columns = ['duration', 'categoria', 'predicted']
     totale['mse'] = (totale['duration'] - totale['predicted'])**2
     totale['mae'] = abs(totale['duration'] - totale['predicted'])
-    totale['perc'] = (abs(totale['duration'] - totale['predicted'])/totale['duration'])*100
+    totale['perc'] = (abs(totale['duration'] - totale['predicted'])/totale['duration'])
     mse_df = pd.DataFrame(columns = ['category', 'mse', 'mae','rmse','perc'])
     for categoria in totale['categoria'].unique():
         a = totale.loc[totale['categoria'] == categoria]
@@ -318,11 +318,11 @@ def mse_classes(y_val, y_val_pred, modello):
     plt.ylabel("RMSE", size = 18)
     plt.subplot(2,2,4)
     plt.bar(mse_df['category'], mse_df['perc'], color = mycolors)
-    plt.title("\n Perc for category \n", size=24)
+    plt.title("\n MAPE for category \n", size=24)
     plt.xticks(size = 15)
     plt.yticks(size = 15)
     plt.xlabel("Category", size = 18)
-    plt.ylabel("Perc", size = 18)
+    plt.ylabel("MAPE", size = 18)
     fig.tight_layout()
     fig.savefig("../risultati_modelli/{}/mse_classes.png".format(modello), dpi =100, bbox_inches='tight')
     plt.close()
@@ -330,7 +330,7 @@ def mse_classes(y_val, y_val_pred, modello):
 
 # READING FILES
 
-#modello = "fede5-2"
+#modello = "modello3"
 #train_df = pd.read_csv("../../data/x_train_no_out_dist.csv")
 #original_train_df =  pd.read_csv("../../data/train.csv")
 #y_train = pd.read_csv("../../data/y_train_no_out.csv")
