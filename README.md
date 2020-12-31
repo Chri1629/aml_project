@@ -45,12 +45,12 @@ project
 │   │   │   ...
 │   └───risultati_modelli
 │       └───modello_1
-│       └───modello_1
-│       └───modello_1
+│       └───modello_2
+│       └───modello_3
 └───data
-│   └───scaled
-│   │   train.csv
-│   │   test.csv
+    └───scaled
+    │   train.csv
+    │   test.csv
 ```
 
 ## Execution
@@ -62,13 +62,13 @@ In order to execute all the files you must run:
 There are some paramaters that can be specified on the command line in order to change the hyperparameters without opening the code. In particular:
 
 ```
-'-e', '--epoch', type=int, required=False, help ="Give the number of epochs, default = 10"
+'-e', '--epoch', type=int, required=False, help ="Give the number of epochs, default = 5"
 
 '-ie', '--initial_epoch', type=int, required=False, default=0, help ="Give the initial epoch, default = 0"
 
 '-bs', '--batch-size', type=int, required=False, default=128, help ="Give the batch size, default = 128"
 
-'-lr', '--learning-rate', type=float, required=False, default=5e-3, help ="Give the learning rate, default = 1e-3"
+'-lr', '--learning-rate', type=float, required=False, default=5e-3, help ="Give the learning rate, default = 5e-3"
 
 '-d', '--data', type=str, required=False, default="data", help = "Give the directory of the data"
 
@@ -81,14 +81,14 @@ There are some paramaters that can be specified on the command line in order to 
 '-sst', '--save-steps', action="store_true"
 
 '-dr', '--decay-rate', type=float, required=False, default=0, help ="Give the decay rate")
-parser.add_argument('-ms', '--model-schema', type=str, required=False, default = "best_model", help="Model structure"
+parser.add_argument('-ms', '--model-schema', type=str, required=False, default = "model1", help="Model structure"
 
 '-o', '--output', type=str, required=False, default="risultati_modelli"
 ```
 
 An example of a correct execution of the code is:
 
-`python main.py -o "risultati_modelli/prova" -e 10 -lr 0.001`
+`python main.py -o "risultati_modelli/prova" -ms model1 -e 10 -lr 0.001`
 ## Additional plots
 
 In order to reproduce all the plots that have been made:
