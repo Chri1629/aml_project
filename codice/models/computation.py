@@ -61,6 +61,9 @@ def computation(args):
     else: 
         print("Not using GPU.")
 
+    if not os.path.exists('../data/scaled'):
+        os.mkdir('../data/scaled')
+
     if not os.path.exists('../data/scaled/x_train_scaled.npy'):
         x_train_scaled, x_validation_scaled, x_test_scaled, y_train_scaled, y_validation, y_validation_scaled = preprocessing_data()
         np.save(arr = x_train_scaled, file = '../data/scaled/x_train_scaled.npy')

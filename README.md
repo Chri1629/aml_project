@@ -1,4 +1,4 @@
-# Advancede Machine Learning project
+# Advanced Machine Learning project
 
 ## Documentation
 
@@ -16,16 +16,16 @@ Then activate it
 
 `source env/bin/activate`
 
-Then install al the libraries used with:
+Then install all the libraries used with:
 
 `pip install -r requirements.txt`
 
-If some of the packages are already installed in the PC this operation is not too slow because it uses the cache memory to install the libraries
+If some of the packages are already installed in the PC this operation is faster
 
 
 ## General structure
 
-For the execution we suggest to use the following structure and to create the directory **scaled** inside the directory **data** that store all the data after the preprocessing phase in order to do the preprocessing only one time because it is an expensive computation.
+For the execution we use the following structure and we create the directory **scaled** inside the directory **data** that store all the data after the preprocessing phase in order to do the preprocessing only one time because it is an expensive computation.
 
 ```
 project
@@ -93,6 +93,7 @@ parser.add_argument('-ms', '--model-schema', type=str, required=False, default =
 An example of a correct execution of the code is:
 
 `python main.py -o "risultati_modelli/prova" -ms model1 -e 10 -lr 0.001`
+
 ## Additional plots
 
 In order to reproduce all the plots that have been made:
