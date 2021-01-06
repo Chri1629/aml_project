@@ -43,7 +43,7 @@ from tensorflow.keras.activations import relu
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.optimizers import Adam, SGD
 from tensorflow.keras import metrics
-from .all_models import getModel
+from models.all_models import getModel
 
 pd.options.mode.chained_assignment = None
 
