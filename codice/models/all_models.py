@@ -9,7 +9,6 @@ from tensorflow.keras.optimizers import Adam, SGD
 from tensorflow.keras import metrics
 from tensorflow.keras import losses
 from tensorflow.keras import regularizers
-from tensorflow.keras.applications import resnet50, vgg19, mobilenet_v2, xception, resnet
 
 
 def getModel(id, input_dim):
